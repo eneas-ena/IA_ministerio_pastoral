@@ -15,7 +15,7 @@
    CONFIGURAÇÃO — já preenchida. Não precisa mexer.
    ===================================================================== */
 const CONFIG = {
-  VERSAO: 'v1.0.0',
+  VERSAO: 'v1.1.0',
   SUPABASE_URL: 'https://ghjbljypxksubmcsvaig.supabase.co',
   SUPABASE_KEY: 'sb_publishable_qXCYqg1WdmelY9D1mptZXg_U8NdoKby',
   SCHEMA: 'ia_ministerio',
@@ -94,6 +94,29 @@ button.chip.ativo{background:var(--navy);color:#F7F4EE}
 p.rot{margin-bottom:0}
 .aviso svg,.linha svg{flex-shrink:0}
 .palco .conteudo b{color:#FFFFFF}
+.conteudo blockquote{margin:0 0 12px;padding:10px 14px;border-left:4px solid var(--terra);background:var(--bg2);border-radius:0 10px 10px 0;color:var(--txt)}
+.conteudo blockquote p:last-child{margin-bottom:0}
+.conteudo h4{font-size:1.05em;margin:16px 0 6px;color:var(--txt)}
+.conteudo .tab{overflow-x:auto;margin:0 0 12px}
+.conteudo table{border-collapse:collapse;width:100%;font-size:.9em}
+.conteudo th,.conteudo td{border-bottom:1px solid var(--borda);padding:6px 8px;text-align:left;vertical-align:top}
+.conteudo th{color:var(--txt)}
+.palco .conteudo blockquote{background:rgba(255,255,255,.07);border-left-color:var(--terra-claro);color:#FFFFFF}
+.palco .conteudo h4{color:#FFFFFF}
+.palco .conteudo th{color:#FFFFFF}.palco .conteudo th,.palco .conteudo td{border-bottom-color:var(--linha-escura)}
+.palco .texto-prof,.painel .texto-prof{color:#E6E9F0;line-height:1.6}
+.painel .conteudo b{color:#FFFFFF}.painel .conteudo blockquote{background:rgba(255,255,255,.07);border-left-color:var(--terra-claro);color:#FFFFFF}.painel .conteudo h4{color:#FFFFFF}
+.palco-grade{display:flex;flex-direction:column;gap:14px}
+.pg-lado1,.pg-lado2{display:flex;flex-direction:column;gap:14px}
+.relogio.compacto{font-size:46px}
+.anexo{background:var(--navy2);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.painel{position:fixed;inset:0;background:var(--navy3);color:#F7F4EE;z-index:30;overflow-y:auto;padding:16px 18px 40px}
+.painel>div{max-width:820px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.anexado{padding-left:22px;border-left:3px solid var(--borda)}
+@media (min-width:900px){
+  .palco-grade{display:grid;grid-template-columns:minmax(0,1fr) 360px;grid-template-areas:"texto lado1" "texto lado2";grid-template-rows:auto 1fr;align-items:start}
+  .pg-texto{grid-area:texto}.pg-lado1{grid-area:lado1}.pg-lado2{grid-area:lado2}
+}
 .datas>div{display:flex;flex-direction:column;align-items:stretch;gap:6px}
 .datas input.in{height:44px;font-size:15px}
 .campo{display:flex;flex-direction:column}
@@ -188,19 +211,25 @@ const ls = {
 
 function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 function inl(s) { return s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>'); }
-function md(t) {
-  if (!t) return '';
-  const linhas = esc(t).split('\n'); let h = '', lista = null, par = [];
-  const fechaPar = () => { if (par.length) { h += '<p>' + par.map(inl).join('<br>') + '</p>'; par = []; } };
-  const fechaLista = () => { if (lista) { h += `<${lista.tipo}>` + lista.itens.map(i => '<li>' + inl(i) + '</li>').join('') + `</${lista.tipo}>`; lista = null; } };
-  for (const l of linhas) {
-    let m;
-    if ((m = l.match(/^\s*[-•]\s+(.*)$/))) { fechaPar(); if (!lista || lista.tipo !== 'ul') { fechaLista(); lista = { tipo: 'ul', itens: [] }; } lista.itens.push(m[1]); }
-    else if ((m = l.match(/^\s*\d+[.)]\s+(.*)$/))) { fechaPar(); if (!lista || lista.tipo !== 'ol') { fechaLista(); lista = { tipo: 'ol', itens: [] }; } lista.itens.push(m[1]); }
-    else if (!l.trim()) { fechaPar(); fechaLista(); }
-    else { fechaLista(); par.push(l); }
+function md(t) { return t ? mdL(esc(t).split('\n')) : ''; }
+function mdL(L) {
+  let h = '', i = 0;
+  const esp = l => /^\s*([-•]\s|\d+[.)]\s|&gt;|#{2,4}\s|\|)/.test(l);
+  while (i < L.length) {
+    const l = L[i]; let m;
+    if (!l.trim()) { i++; continue; }
+    if ((m = l.match(/^#{2,4}\s+(.*)$/))) { h += `<h4>${inl(m[1])}</h4>`; i++; continue; }
+    if (/^&gt;/.test(l)) { const b = []; while (i < L.length && /^&gt;/.test(L[i])) { b.push(L[i].replace(/^&gt;\s?/, '')); i++; } h += `<blockquote>${mdL(b)}</blockquote>`; continue; }
+    if (/^\|/.test(l)) {
+      const rows = []; while (i < L.length && /^\|/.test(L[i])) { if (!/^\|[\s\-:|]+\|?\s*$/.test(L[i])) rows.push(L[i].trim().replace(/^\||\|$/g, '').split('|').map(c => inl(c.trim()))); i++; }
+      h += `<div class="tab"><table>${rows.map((r, k) => `<tr>${r.map(c => k === 0 ? `<th>${c}</th>` : `<td>${c}</td>`).join('')}</tr>`).join('')}</table></div>`; continue;
+    }
+    if ((m = l.match(/^\s*[-•]\s+(.*)$/))) { const it = []; while (i < L.length && (m = L[i].match(/^\s*[-•]\s+(.*)$/))) { it.push(m[1]); i++; } h += `<ul>${it.map(x => `<li>${inl(x)}</li>`).join('')}</ul>`; continue; }
+    if ((m = l.match(/^\s*(\d+)[.)]\s+(.*)$/))) { const ini = +m[1]; const it = []; while (i < L.length && (m = L[i].match(/^\s*\d+[.)]\s+(.*)$/))) { it.push(m[1]); i++; } h += `<ol${ini !== 1 ? ` start="${ini}"` : ''}>${it.map(x => `<li>${inl(x)}</li>`).join('')}</ol>`; continue; }
+    const par = []; while (i < L.length && L[i].trim() && (par.length === 0 || !esp(L[i]))) { par.push(L[i]); i++; }
+    h += '<p>' + par.map(inl).join('<br>') + '</p>';
   }
-  fechaPar(); fechaLista(); return h;
+  return h;
 }
 function toast(msg, ms = 2600) { const t = document.getElementById('toast'); t.textContent = msg; t.style.display = 'block'; clearTimeout(t._t); t._t = setTimeout(() => t.style.display = 'none', ms); }
 function carregando(on) { document.getElementById('carregando').style.display = on ? 'flex' : 'none'; }
@@ -937,8 +966,10 @@ TELAS['p-preparo'] = () => {
   let corpo;
   if (aba === 'roteiro') {
     corpo = `${chk.length ? `<div class="card"><div class="entre"><p class="p0 t14 b8">Pronto para a aula</p><span class="t13 b7 mudo">${feito.length} de ${chk.length}</span></div>${chk.map((c, i) => `<label class="check t14"><input type="checkbox" data-ch="marcaChk" data-i="${i}" ${feito.includes(i) ? 'checked' : ''}><span>${esc(c)}</span></label>`).join('')}</div>` : ''}
-      <div class="entre"><p class="eyebrow p0">Blocos da aula</p><span class="t13 mudo">${total} min planejados</span></div>
-      ${bs.map(b => `<div class="card" style="gap:6px"><div class="linha"><span class="t13 b8 mudo" style="width:52px">${b.minutos ? b.minutos + ' min' : '—'}</span><p class="p0 cresce t15 b7">${esc(b.titulo)}</p>${b.visivel_aluno ? '<span class="pilula p-cinza">ALUNO VÊ</span>' : '<span class="pilula p-terra">SÓ PROFESSOR</span>'}</div>${b.nota_professor ? `<p class="p0 t14 mudo" style="line-height:1.45;padding-left:62px">${esc(b.nota_professor)}</p>` : ''}</div>`).join('') || '<p class="vazio">Esta aula ainda não tem blocos. Monte-os na Biblioteca.</p>'}
+      ${a.guia_professor || a.anexo_professor ? `<div class="linha">${a.guia_professor ? `<button class="btn ${S.p.ler === 'guia' ? 'escuro' : 'sec'} peq" style="flex:1" data-a="lerPrep" data-id="guia">Guia da aula</button>` : ''}${a.anexo_professor ? `<button class="btn ${S.p.ler === 'anexo' ? 'escuro' : 'sec'} peq" style="flex:1" data-a="lerPrep" data-id="anexo">Perguntas difíceis</button>` : ''}</div>` : ''}
+      ${S.p.ler === 'guia' || S.p.ler === 'anexo' ? `<div class="card"><div class="conteudo">${md(S.p.ler === 'guia' ? a.guia_professor : a.anexo_professor)}</div><button class="btn-link" data-a="lerPrep" data-id="${S.p.ler}" style="align-self:center">Fechar</button></div>` : ''}
+      <div class="entre"><p class="eyebrow p0">Roteiro da aula</p><span class="t13 mudo">${total} min planejados</span></div>
+      ${passosDaAula(a.id).map(b => `<div class="card" style="gap:6px"><div class="linha"><span class="t13 b8 mudo" style="width:52px">${b.minutos ? b.minutos + ' min' : '—'}</span><p class="p0 cresce t15 b7">${esc(b.titulo)}</p>${b.visivel_aluno ? '<span class="pilula p-cinza">ALUNO VÊ</span>' : '<span class="pilula p-terra">SÓ PROFESSOR</span>'}</div>${b.nota_professor ? `<p class="p0 t14 mudo" style="line-height:1.45;padding-left:62px">${esc(b.nota_professor)}</p>` : ''}${b.anexos.length ? `<p class="p0 t13 mudo" style="padding-left:62px">No app: ${b.anexos.map(x => esc(rotTipo(x.tipo).toLowerCase() + ' “' + x.titulo + '”')).join(', ')}</p>` : ''}${b.texto_professor ? `<button class="btn-link" style="align-self:flex-start;padding:0 0 0 62px" data-a="lerPrep" data-id="${b.id}">${S.p.ler === b.id ? 'Fechar o texto' : 'Ler o texto da aula'}</button>${S.p.ler === b.id ? `<div class="conteudo t15" style="border-top:1px solid var(--borda);padding-top:10px">${md(b.texto_professor)}</div>` : ''}` : ''}</div>`).join('') || '<p class="vazio">Esta aula ainda não tem blocos. Monte-os na Biblioteca.</p>'}
       <label class="card" style="flex-direction:row;align-items:center;gap:12px;cursor:pointer"><input type="checkbox" data-ch="liberaAula" ${r.liberada ? 'checked' : ''}><span class="cresce"><span class="t15 b8">Liberar a aula inteira para os alunos</span><br><span class="t13 mudo">Os alunos veem a apostila, os comandos e os exercícios.</span></span></label>
       <label class="card" style="flex-direction:row;align-items:center;gap:12px;cursor:pointer"><input type="checkbox" data-ch="concluiAula" ${r.concluida ? 'checked' : ''}><span class="cresce t15 b8">Aula concluída</span></label>
       <div class="campo"><label class="rot" for="dh">Data e hora desta aula</label><input class="in" type="datetime-local" id="dh" data-ch="dataTA" value="${esc(paraInputLocal(r.data_hora))}"></div>`;
@@ -950,38 +981,64 @@ TELAS['p-preparo'] = () => {
     <div class="rodape"><button class="btn escuro" data-a="palco" data-id="${r.id}">${ic('play', 18, 'var(--terra-claro)')} Iniciar modo palco</button></div>`;
 };
 ACOES.abaPrep = el => { S.p.aba = el.dataset.v; render(); };
+ACOES.lerPrep = el => { S.p.ler = S.p.ler === el.dataset.id ? null : el.dataset.id; render(); };
 ACOES.marcaChk = async el => { const r = X.turma_aulas[S.p.ta]; const i = +el.dataset.i; let f = [...(r.checklist_feito || [])]; f = el.checked ? [...new Set([...f, i])] : f.filter(x => x !== i); const ok = await tenta(() => salvar('turma_aulas', { id: r.id, checklist_feito: f })); if (ok) render(); };
 ACOES.liberaAula = async el => { const r = X.turma_aulas[S.p.ta]; const ok = await tenta(() => salvar('turma_aulas', { id: r.id, liberada: el.checked }), el.checked ? 'Aula liberada para os alunos.' : 'Liberação retirada.'); if (ok) render(); };
 ACOES.concluiAula = async el => { const r = X.turma_aulas[S.p.ta]; const ok = await tenta(() => salvar('turma_aulas', { id: r.id, concluida: el.checked, ...(el.checked ? { liberada: true } : {}) }), 'Atualizado.'); if (ok) render(); };
 ACOES.dataTA = async el => { const r = X.turma_aulas[S.p.ta]; const ok = await tenta(() => salvar('turma_aulas', { id: r.id, data_hora: deInputLocal(el.value) }), 'Data atualizada.'); if (ok) render(); };
 
-/* ---------- Modo palco ---------- */
+/* ---------- Modo palco (tela de aula) ---------- */
+// Passos = blocos que conduzem a aula. Comandos e exercícios sem tempo próprio ficam anexados ao passo anterior.
+function ehAnexo(b) { return ['comando', 'exercicio'].includes(b.tipo) && !(b.minutos > 0); }
+function passosDaAula(aid) {
+  const out = [];
+  for (const b of blocosDaAula(aid)) { if (ehAnexo(b) && out.length) out[out.length - 1].anexos.push(b); else out.push({ ...b, anexos: [] }); }
+  return out;
+}
+function fonteTexto() { const v = parseInt(ls.get('iam_fonte')); return v >= 14 && v <= 30 ? v : 18; }
 function palcoEstado() {
-  const r = X.turma_aulas[S.p.ta]; const bs = blocosDaAula(r.aula_id);
-  if (!S.palco || S.palco.ta !== r.id) S.palco = { ta: r.id, i: 0, restante: (bs[0]?.minutos || 0) * 60, rodando: true, inicio: Date.now(), verConteudo: false, verPerg: false };
+  const r = X.turma_aulas[S.p.ta]; const bs = passosDaAula(r.aula_id);
+  if (!S.palco || S.palco.ta !== r.id) S.palco = { ta: r.id, i: 0, restante: (bs[0]?.minutos || 0) * 60, rodando: true, inicio: Date.now(), verAluno: false, verPerg: false, painel: null, verCmd: {} };
   return { r, bs };
 }
 function mmss(s) { const neg = s < 0; s = Math.abs(Math.round(s)); return (neg ? '-' : '') + String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); }
+function liberadoPara(r, bid) { return r.liberada || S.P.liberacoes.some(l => l.turma_id === r.turma_id && l.bloco_id === bid); }
+function botaoLiberar(r, b, peq) {
+  const lib = liberadoPara(r, b.id);
+  return `<button class="btn ${lib ? 'verde' : 'claro'} ${peq ? 'peq' : ''}" data-a="liberarBloco" data-id="${b.id}" ${r.liberada ? 'disabled' : ''}>${lib ? ic('check', 18, 'currentColor', 2.5) + (r.liberada ? ' Aula inteira liberada' : ' Liberado (toque para retirar)') : 'Liberar para a turma'}</button>`;
+}
 TELAS['p-palco'] = () => {
   const { r, bs } = palcoEstado(); const a = X.aulas[r.aula_id], t = X.turmas[r.turma_id]; const pc = S.palco; const b = bs[pc.i];
   const decorrido = Math.floor((Date.now() - pc.inicio) / 60000);
   const perg = S.P.perguntas.filter(q => q.turma_id === t.id && !q.lida);
-  const liberado = b && (r.liberada || S.P.liberacoes.some(l => l.turma_id === t.id && l.bloco_id === b.id));
   const prox = bs[pc.i + 1];
   if (!b) return `<div class="palco"><div class="entre"><button class="btn sec peq" data-a="voltar">Voltar</button>${botaoTema()}</div><p class="vazio" style="color:#C9D1DE">Esta aula ainda não tem blocos. Monte-os na Biblioteca.</p></div>`;
+  if (pc.painel) {
+    const txt = pc.painel === 'guia' ? a.guia_professor : a.anexo_professor;
+    return `<div class="painel"><div><div class="entre"><p class="p0 t13 b8" style="letter-spacing:1px;color:var(--terra-claro)">${pc.painel === 'guia' ? 'GUIA DA AULA' : 'PERGUNTAS DIFÍCEIS'}</p><button class="btn claro peq" data-a="painel" data-v="">Voltar à aula</button></div>
+      <div class="conteudo texto-prof" style="font-size:${fonteTexto()}px">${md(txt)}</div><button class="btn claro" data-a="painel" data-v="">Voltar à aula</button></div></div>`;
+  }
   const tot = (b.minutos || 0) * 60;
+  const texto = b.texto_professor
+    ? md(b.texto_professor)
+    : `${b.nota_professor ? `<p><b>Nota do professor:</b> ${esc(b.nota_professor)}</p>` : ''}${md(b.conteudo) || '<p style="color:#C9D1DE">Este bloco ainda não tem o texto da apostila. Cadastre-o na Biblioteca, no campo “Texto do professor”.</p>'}`;
+  const relogio = b.minutos ? `<div class="caixa" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 16px"><p class="relogio compacto ${pc.restante < 0 ? 'estourou' : ''}" id="relogio">${mmss(pc.restante)}</p><p class="p0 t14" style="color:#C9D1DE" id="relogio-sub">${pc.restante < 0 ? 'tempo esgotado' : `restantes de ${b.minutos} minutos`}</p><div class="barra" style="width:100%"><div id="relogio-barra" style="width:${tot ? Math.min(100, Math.max(0, (1 - pc.restante / tot) * 100)) : 0}%"></div></div><div class="linha"><button class="btn sec peq" data-a="pausa">${pc.rodando ? 'Pausar' : 'Retomar'}</button><button class="btn sec peq" data-a="mais5">+5 min</button><button class="btn sec peq" data-a="zerar">Reiniciar</button></div></div>` : '';
+  const ferramentas = `<div class="linha" style="flex-wrap:wrap">${a.guia_professor ? '<button class="btn sec peq" data-a="painel" data-v="guia">Guia da aula</button>' : ''}${a.anexo_professor ? '<button class="btn sec peq" data-a="painel" data-v="anexo">Perguntas difíceis</button>' : ''}<span class="cresce"></span><span class="linha" style="gap:6px;flex-wrap:nowrap"><button class="btn sec peq" data-a="fonte" data-d="-2" aria-label="Diminuir letra">A−</button><button class="btn sec peq" data-a="fonte" data-d="2" aria-label="Aumentar letra">A+</button></span></div>`;
+  const aluno = b.visivel_aluno ? `<div class="caixa" style="display:flex;flex-direction:column;gap:10px"><button class="btn-link" style="color:var(--terra-claro);padding:0;text-align:left" data-a="verAluno">${pc.verAluno ? 'Esconder o que o aluno vê' : 'Ver o que o aluno vê neste bloco'}</button>${pc.verAluno ? `<div class="conteudo" style="color:#E6E9F0">${md(b.conteudo)}</div>` : ''}${botaoLiberar(r, b)}</div>` : '';
+  const anexos = b.anexos.length ? `<div class="caixa" style="display:flex;flex-direction:column;gap:10px"><p class="p0 t13 b8" style="letter-spacing:1px;color:var(--terra-claro)">NO APP DO ALUNO NESTE BLOCO</p>${b.anexos.map(x => `<div class="anexo"><p class="p0 t13 b8" style="color:#C9D1DE">${esc(rotTipo(x.tipo).toUpperCase())}</p><p class="p0 t15 b8">${esc(x.titulo)}</p>${x.comando ? (pc.verCmd[x.id] ? `<p class="p0 t14" style="line-height:1.5;white-space:pre-wrap">${esc(x.comando)}</p><button class="btn-link" style="color:#C9D1DE;padding:0;text-align:left" data-a="verCmd" data-id="${x.id}">Esconder comando</button>` : `<button class="btn-link" style="color:#C9D1DE;padding:0;text-align:left" data-a="verCmd" data-id="${x.id}">Ver o comando</button>`) : ''}${botaoLiberar(r, x, true)}</div>`).join('')}</div>` : '';
+  const perguntas = `<button class="caixa entre" style="border:none;color:#F7F4EE;cursor:pointer;font:inherit" data-a="verPerg"><span class="linha t15 b7">${ic('balao', 20, 'var(--terra-claro)')} Perguntas da turma</span><span class="t14 b8" style="background:var(--terra-claro);color:var(--navy3);padding:2px 10px;border-radius:10px" id="nperg">${perg.length}</span></button>
+    ${pc.verPerg ? `<div class="caixa" style="display:flex;flex-direction:column;gap:10px">${perg.map(q => { const m = X.matriculas[q.matricula_id]; return `<div><p class="p0 t13 b8" style="color:var(--terra-claro)">${esc(X.pessoas[m?.pessoa_id]?.nome || 'Aluno')}</p><p class="p0 t15" style="line-height:1.45">${esc(q.texto)}</p><button class="btn-link" style="color:#C9D1DE;padding:4px 0" data-a="pergLidaPalco" data-id="${q.id}">Marcar como respondida</button></div>`; }).join('') || '<p class="p0 t14" style="color:#C9D1DE">Nenhuma pergunta nova.</p>'}</div>` : ''}`;
   return `<div class="palco">
     <div class="entre"><span class="linha t13 b8" style="background:var(--terra-claro);color:var(--navy3);padding:6px 10px;border-radius:8px;gap:6px"><span style="width:8px;height:8px;border-radius:4px;background:var(--navy3)"></span>AO VIVO · <span id="decorrido">${duracao(decorrido) || '0 min'}</span></span>
       <div class="linha"><span class="versao">${CONFIG.VERSAO}</span><button class="btn sec peq" data-a="encerrarPalco">Encerrar</button></div></div>
-    <div><p class="p0 t13 b8" style="letter-spacing:1px;color:#C9D1DE">BLOCO ${pc.i + 1} DE ${bs.length} · ${esc(rotTipo(b.tipo).toUpperCase())}</p><h1 class="serif" style="font-size:26px;line-height:1.25;margin-top:6px">${esc(b.titulo)}</h1></div>
-    ${b.minutos ? `<div class="caixa" style="display:flex;flex-direction:column;align-items:center;gap:10px"><p class="relogio ${pc.restante < 0 ? 'estourou' : ''}" id="relogio">${mmss(pc.restante)}</p><p class="p0 t14" style="color:#C9D1DE" id="relogio-sub">${pc.restante < 0 ? 'tempo esgotado' : `restantes de ${b.minutos} minutos`}</p><div class="barra" style="width:100%"><div id="relogio-barra" style="width:${tot ? Math.min(100, Math.max(0, (1 - pc.restante / tot) * 100)) : 0}%"></div></div><div class="linha"><button class="btn sec peq" data-a="pausa">${pc.rodando ? 'Pausar' : 'Retomar'}</button><button class="btn sec peq" data-a="mais5">+5 min</button><button class="btn sec peq" data-a="zerar">Reiniciar</button></div></div>` : ''}
-    ${b.nota_professor ? `<div class="caixa"><p class="p0 t13 b8" style="letter-spacing:1px;color:var(--terra-claro)">NOTA DO PROFESSOR</p><p class="p0 t16" style="line-height:1.5;margin-top:6px">${esc(b.nota_professor)}</p></div>` : ''}
-    <div class="caixa"><button class="btn-link" style="color:var(--terra-claro);padding:0" data-a="verConteudo">${pc.verConteudo ? 'Esconder conteúdo do bloco' : 'Ver conteúdo do bloco'}</button>${pc.verConteudo ? `<div class="conteudo" style="color:#E6E9F0;margin-top:8px">${md(b.conteudo)}${b.comando ? `<div class="comando" style="background:var(--navy2)"><p class="txt">${esc(b.comando)}</p></div>` : ''}</div>` : ''}</div>
-    ${b.visivel_aluno ? `<button class="btn ${liberado ? 'verde' : 'claro'}" data-a="liberarBloco" ${r.liberada ? 'disabled' : ''}>${liberado ? ic('check', 18, 'currentColor', 2.5) + (r.liberada ? ' Aula inteira liberada' : ' Liberado para a turma (toque para retirar)') : 'Liberar este bloco para a turma'}</button>` : '<p class="p0 t13" style="color:#C9D1DE;text-align:center">Bloco só do professor: os alunos não veem.</p>'}
-    <button class="caixa entre" style="border:none;color:#F7F4EE;cursor:pointer;font:inherit" data-a="verPerg"><span class="linha t15 b7">${ic('balao', 20, 'var(--terra-claro)')} Perguntas da turma</span><span class="t14 b8" style="background:var(--terra-claro);color:var(--navy3);padding:2px 10px;border-radius:10px" id="nperg">${perg.length}</span></button>
-    ${pc.verPerg ? `<div class="caixa" style="display:flex;flex-direction:column;gap:10px">${perg.map(q => { const m = X.matriculas[q.matricula_id]; return `<div><p class="p0 t13 b8" style="color:var(--terra-claro)">${esc(X.pessoas[m?.pessoa_id]?.nome || 'Aluno')}</p><p class="p0 t15" style="line-height:1.45">${esc(q.texto)}</p><button class="btn-link" style="color:#C9D1DE;padding:4px 0" data-a="pergLidaPalco" data-id="${q.id}">Marcar como respondida</button></div>`; }).join('') || '<p class="p0 t14" style="color:#C9D1DE">Nenhuma pergunta nova.</p>'}</div>` : ''}
-    <div class="linha" style="margin-top:auto"><button class="btn sec" style="width:56px;height:56px;padding:0" data-a="blocoAnt" aria-label="Bloco anterior" ${pc.i === 0 ? 'disabled' : ''}>${ic('voltar')}</button>
-      <button class="btn" style="flex:1;min-height:56px;background:#F7F4EE;color:var(--navy3);flex-direction:column;align-items:flex-start;gap:0;text-align:left" data-a="blocoProx" ${prox ? '' : 'disabled'}><span class="t13 b8" style="color:#4A5568">${prox ? `PRÓXIMO${prox.minutos ? ' · ' + prox.minutos + ' MIN' : ''}` : 'FIM DA AULA'}</span><span class="t15 b8">${prox ? esc(prox.titulo) : 'Toque em Encerrar'}</span></button></div>
+    <div><p class="p0 t13 b8" style="letter-spacing:1px;color:#C9D1DE">${esc(a.titulo.toUpperCase())} · BLOCO ${pc.i + 1} DE ${bs.length} · ${esc(rotTipo(b.tipo).toUpperCase())}</p><h1 class="serif" style="font-size:26px;line-height:1.25;margin-top:6px">${esc(b.titulo)}</h1></div>
+    <div class="palco-grade">
+      <div class="pg-lado1">${relogio}${ferramentas}</div>
+      <div class="pg-texto caixa"><div class="conteudo texto-prof" id="texto-prof" style="font-size:${fonteTexto()}px">${texto}</div></div>
+      <div class="pg-lado2">${aluno}${anexos}${perguntas}</div>
+    </div>
+    <div class="linha" style="margin-top:auto;position:sticky;bottom:10px"><button class="btn sec" style="width:56px;height:56px;padding:0;background:var(--navy3)" data-a="blocoAnt" aria-label="Bloco anterior" ${pc.i === 0 ? 'disabled' : ''}>${ic('voltar')}</button>
+      <button class="btn" style="flex:1;min-height:56px;background:#F7F4EE;color:var(--navy3);flex-direction:column;align-items:flex-start;gap:0;text-align:left;box-shadow:0 6px 18px rgba(0,0,0,.35)" data-a="blocoProx" ${prox ? '' : 'disabled'}><span class="t13 b8" style="color:#4A5568">${prox ? `PRÓXIMO${prox.minutos ? ' · ' + prox.minutos + ' MIN' : ''}` : 'FIM DA AULA'}</span><span class="t15 b8">${prox ? esc(prox.titulo) : 'Toque em Encerrar'}</span></button></div>
   </div>`;
 };
 POS['p-palco'] = () => {
@@ -990,26 +1047,33 @@ POS['p-palco'] = () => {
     const pc = S.palco; const agora = Date.now(); const dt = (agora - ult) / 1000; ult = agora; if (!pc) return;
     if (pc.rodando) pc.restante -= dt;
     const el = document.getElementById('relogio'); if (el) { el.textContent = mmss(pc.restante); el.classList.toggle('estourou', pc.restante < 0); }
-    const r = X.turma_aulas[pc.ta]; const b = blocosDaAula(r.aula_id)[pc.i]; const tot = (b?.minutos || 0) * 60;
+    const r = X.turma_aulas[pc.ta]; const b = passosDaAula(r.aula_id)[pc.i]; const tot = (b?.minutos || 0) * 60;
     const br = document.getElementById('relogio-barra'); if (br && tot) br.style.width = Math.min(100, Math.max(0, (1 - pc.restante / tot) * 100)) + '%';
     const sub = document.getElementById('relogio-sub'); if (sub && b) sub.textContent = pc.restante < 0 ? 'tempo esgotado' : `restantes de ${b.minutos} minutos`;
     const dc = document.getElementById('decorrido'); if (dc) dc.textContent = duracao(Math.floor((agora - pc.inicio) / 60000)) || '0 min';
   }, 1000));
   timers.push(setInterval(async () => { try { const d = await rpc('prof_dados', { p_token: S.token }); S.P.perguntas = d.perguntas; S.P.liberacoes = d.liberacoes; indexa(); const pc = S.palco; const t = X.turma_aulas[pc.ta].turma_id; const n = S.P.perguntas.filter(q => q.turma_id === t && !q.lida).length; const el = document.getElementById('nperg'); if (el && el.textContent !== String(n)) { el.textContent = n; if (pc.verPerg) render(); else toast('Nova pergunta da turma.'); } } catch (e) {} }, 20000));
 };
-function vaiBloco(i) { const r = X.turma_aulas[S.palco.ta]; const bs = blocosDaAula(r.aula_id); if (i < 0 || i >= bs.length) return; S.palco.i = i; S.palco.restante = (bs[i].minutos || 0) * 60; S.palco.rodando = true; S.palco.verConteudo = false; render(); }
+document.addEventListener('keydown', ev => {
+  if (S.tela !== 'p-palco' || !S.palco || S.palco.painel || /INPUT|TEXTAREA|SELECT/.test(ev.target.tagName)) return;
+  if (ev.key === 'ArrowRight') { ev.preventDefault(); vaiBloco(S.palco.i + 1); } else if (ev.key === 'ArrowLeft') { ev.preventDefault(); vaiBloco(S.palco.i - 1); }
+});
+function vaiBloco(i) { const r = X.turma_aulas[S.palco.ta]; const bs = passosDaAula(r.aula_id); if (i < 0 || i >= bs.length) return; Object.assign(S.palco, { i, restante: (bs[i].minutos || 0) * 60, rodando: true, verAluno: false, verCmd: {} }); render(); window.scrollTo(0, 0); }
 ACOES.blocoAnt = () => vaiBloco(S.palco.i - 1);
 ACOES.blocoProx = () => vaiBloco(S.palco.i + 1);
 ACOES.pausa = () => { S.palco.rodando = !S.palco.rodando; render(); };
 ACOES.mais5 = () => { S.palco.restante += 300; render(); };
-ACOES.zerar = () => { const r = X.turma_aulas[S.palco.ta]; S.palco.restante = (blocosDaAula(r.aula_id)[S.palco.i]?.minutos || 0) * 60; render(); };
-ACOES.verConteudo = () => { S.palco.verConteudo = !S.palco.verConteudo; render(); };
+ACOES.zerar = () => { const r = X.turma_aulas[S.palco.ta]; S.palco.restante = (passosDaAula(r.aula_id)[S.palco.i]?.minutos || 0) * 60; render(); };
+ACOES.verAluno = () => { S.palco.verAluno = !S.palco.verAluno; render(); };
+ACOES.verCmd = el => { S.palco.verCmd[el.dataset.id] = !S.palco.verCmd[el.dataset.id]; render(); };
 ACOES.verPerg = () => { S.palco.verPerg = !S.palco.verPerg; render(); };
+ACOES.painel = el => { S.palco.painel = el.dataset.v || null; const y = S.palco._y; if (S.palco.painel) S.palco._y = window.scrollY; render(); window.scrollTo(0, S.palco.painel ? 0 : (y || 0)); };
+ACOES.fonte = el => { const v = Math.max(14, Math.min(30, fonteTexto() + (+el.dataset.d))); ls.set('iam_fonte', v); document.querySelectorAll('.texto-prof').forEach(x => x.style.fontSize = v + 'px'); };
 ACOES.pergLidaPalco = async el => { const ok = await tenta(() => salvar('perguntas', { id: el.dataset.id, lida: true })); if (ok) render(); };
-ACOES.liberarBloco = async () => {
-  const r = X.turma_aulas[S.palco.ta]; const b = blocosDaAula(r.aula_id)[S.palco.i];
-  const l = S.P.liberacoes.find(x => x.turma_id === r.turma_id && x.bloco_id === b.id);
-  const ok = await tenta(() => l ? excluir('liberacoes', l.id).then(() => true) : salvar('liberacoes', { turma_id: r.turma_id, bloco_id: b.id }), l ? 'Liberação retirada.' : 'Liberado para a turma.');
+ACOES.liberarBloco = async el => {
+  const r = X.turma_aulas[S.palco.ta]; const bid = el.dataset.id;
+  const l = S.P.liberacoes.find(x => x.turma_id === r.turma_id && x.bloco_id === bid);
+  const ok = await tenta(() => l ? excluir('liberacoes', l.id).then(() => true) : salvar('liberacoes', { turma_id: r.turma_id, bloco_id: bid }), l ? 'Liberação retirada.' : 'Liberado para a turma.');
   if (ok) render();
 };
 ACOES.encerrarPalco = async () => {
@@ -1039,7 +1103,7 @@ TELAS['p-bib-aula'] = () => {
   const a = X.aulas[S.p.id]; if (!a) return TELAS['p-biblioteca'](); const f = X.formatos[a.formato_id]; const bs = blocosDaAula(a.id);
   return topo({ eyebrow: `${f?.nome || ''} · Aula ${a.ordem}`, titulo: a.titulo, sub: `${bs.length} blocos · ${bs.reduce((s, b) => s + (b.minutos || 0), 0)} min planejados` }) + `<main>
     <button class="btn sec" data-a="editarAula" data-id="${a.id}">${ic('lapis', 18)} Editar dados da aula</button>
-    ${bs.map((b, i) => { const outros = usosDoBloco(b.id).filter(x => x.id !== a.id); return `<div class="card" style="gap:8px"><div class="linha"><span class="t13 b8 mudo" style="width:24px">${i + 1}</span><button class="cresce" data-a="editarBloco" data-id="${b.id}" data-aula="${a.id}" style="background:none;border:none;text-align:left;padding:0;cursor:pointer;color:inherit"><span class="t15 b7">${esc(b.titulo)}</span><br><span class="t13 mudo">${esc(rotTipo(b.tipo))}${b.minutos ? ' · ' + b.minutos + ' min' : ''}${b.visivel_aluno ? '' : ' · só professor'}${outros.length ? ` · também em ${outros.length} outra${outros.length > 1 ? 's' : ''} aula${outros.length > 1 ? 's' : ''}` : ''}</span></button>
+    ${bs.map((b, i) => { const outros = usosDoBloco(b.id).filter(x => x.id !== a.id); return `<div class="card ${ehAnexo(b) && i > 0 ? 'anexado' : ''}" style="gap:8px"><div class="linha"><span class="t13 b8 mudo" style="width:24px">${i + 1}</span><button class="cresce" data-a="editarBloco" data-id="${b.id}" data-aula="${a.id}" style="background:none;border:none;text-align:left;padding:0;cursor:pointer;color:inherit"><span class="t15 b7">${esc(b.titulo)}</span><br><span class="t13 mudo">${esc(rotTipo(b.tipo))}${b.minutos ? ' · ' + b.minutos + ' min' : ''}${b.visivel_aluno ? '' : ' · só professor'}${b.texto_professor ? ' · com texto da apostila' : ''}${outros.length ? ` · também em ${outros.length} outra${outros.length > 1 ? 's' : ''} aula${outros.length > 1 ? 's' : ''}` : ''}</span></button>
       <button class="btn-ic claro" style="color:var(--txt)" data-a="moverBloco" data-lig="${b._lig.id}" data-d="-1" aria-label="Subir" ${i === 0 ? 'disabled' : ''}>${ic('cima', 20)}</button><button class="btn-ic claro" style="color:var(--txt)" data-a="moverBloco" data-lig="${b._lig.id}" data-d="1" aria-label="Descer" ${i === bs.length - 1 ? 'disabled' : ''}>${ic('baixo', 20)}</button></div></div>`; }).join('') || '<p class="vazio">Nenhum bloco ainda.</p>'}
     <div class="linha"><button class="btn" style="flex:1" data-a="novoBloco" data-aula="${a.id}">+ Novo bloco</button><button class="btn sec" style="flex:1" data-a="vincular" data-aula="${a.id}">+ Usar bloco existente</button></div>
     <button class="btn-link" data-a="excluirAula" data-id="${a.id}" style="align-self:center;color:var(--terra)">Excluir esta aula</button>
@@ -1057,7 +1121,7 @@ ACOES.excluirAula = async el => { const a = X.aulas[el.dataset.id]; if (S.P.turm
 
 TELAS['p-bloco'] = () => {
   const b = S.p.id ? X.blocos[S.p.id] : null; const f = S.f;
-  if (f._ini !== (b?.id || 'novo')) { f._ini = b?.id || 'novo'; Object.assign(f, { titulo: b?.titulo || '', tipo: b?.tipo || 'exposicao', minutos: b?.minutos ?? 10, visivel: b ? b.visivel_aluno : true, conteudo: b?.conteudo || '', comando: b?.comando || '', campos: (b?.campos || []).map(c => `${c.rotulo} | ${c.linhas || 3}`).join('\n'), destino: b?.destino_kit || '', nota: b?.nota_professor || '' }); }
+  if (f._ini !== (b?.id || 'novo')) { f._ini = b?.id || 'novo'; Object.assign(f, { titulo: b?.titulo || '', tipo: b?.tipo || 'exposicao', minutos: b?.minutos ?? 10, visivel: b ? b.visivel_aluno : true, conteudo: b?.conteudo || '', comando: b?.comando || '', campos: (b?.campos || []).map(c => `${c.rotulo} | ${c.linhas || 3}`).join('\n'), destino: b?.destino_kit || '', nota: b?.nota_professor || '', texto: b?.texto_professor || '' }); }
   const outros = b ? usosDoBloco(b.id).filter(x => x.id !== S.p.aula) : [];
   const tipos = [['devocional', 'Devocional'], ['exposicao', 'Exposição'], ['pratica', 'Prática'], ['exercicio', 'Exercício'], ['comando', 'Comando'], ['nota', 'Nota'], ['intervalo', 'Intervalo'], ['encerramento', 'Encerramento']];
   return topo({ titulo: b ? 'Editar bloco' : 'Novo bloco', sub: S.p.aula ? esc(X.aulas[S.p.aula]?.titulo || '') : '' }) + `<main>
@@ -1069,7 +1133,8 @@ TELAS['p-bloco'] = () => {
     ${f.tipo === 'comando' ? `<div class="campo"><label class="rot" for="bcm">Texto do comando</label><textarea class="in" id="bcm" rows="4" data-f="comando">${esc(f.comando)}</textarea></div>` : ''}
     ${f.tipo === 'exercicio' ? `<div class="campo"><label class="rot" for="bcp">Campos de resposta <span class="mudo" style="font-weight:400">(um por linha: Rótulo | nº de linhas)</span></label><textarea class="in" id="bcp" rows="4" data-f="campos" placeholder="Ideia central | 2">${esc(f.campos)}</textarea></div>
       <div class="campo"><label class="rot" for="bdk">Ao enviar, copiar para o kit do aluno</label><select class="in" id="bdk" data-f="destino"><option value="" ${!f.destino ? 'selected' : ''}>Não copiar</option><option value="pacto" ${f.destino === 'pacto' ? 'selected' : ''}>Pacto de uso</option><option value="perfil" ${f.destino === 'perfil' ? 'selected' : ''}>Perfil teológico</option></select></div>` : ''}
-    <div class="campo"><label class="rot" for="bn">Nota do professor <span class="mudo" style="font-weight:400">(aparece no preparo e no modo palco)</span></label><textarea class="in" id="bn" rows="3" data-f="nota">${esc(f.nota)}</textarea></div>
+    <div class="campo"><label class="rot" for="bn">Nota do professor <span class="mudo" style="font-weight:400">(lembrete curto no preparo)</span></label><textarea class="in" id="bn" rows="3" data-f="nota">${esc(f.nota)}</textarea></div>
+    ${['comando', 'exercicio'].includes(f.tipo) ? '' : `<div class="campo"><label class="rot" for="btp">Texto do professor (apostila) <span class="mudo" style="font-weight:400">(é o que aparece no modo aula; “> ” no início da linha vira fala destacada)</span></label><textarea class="in" id="btp" rows="14" data-f="texto">${esc(f.texto)}</textarea></div>`}
     ${b ? `<div class="linha" style="justify-content:center">${S.p.aula ? `<button class="btn-link" data-a="desvincular">Tirar desta aula</button><span class="mudo3">·</span>` : ''}<button class="btn-link" style="color:var(--terra)" data-a="excluirBloco">Excluir bloco de vez</button></div>` : ''}
   </main><div class="rodape"><button class="btn" data-a="salvarBloco">Salvar bloco</button></div>`;
 };
@@ -1079,7 +1144,7 @@ ACOES.salvarBloco = async () => {
   const campos = (f.campos || '').split('\n').map(l => l.trim()).filter(Boolean).map(l => { const [r, n] = l.split('|'); return { rotulo: r.trim(), linhas: Math.max(1, Math.min(12, parseInt(n) || 3)) }; });
   if (f.tipo === 'exercicio' && !campos.length) return toast('Informe pelo menos um campo de resposta.');
   if (f.tipo === 'comando' && !f.comando.trim()) return toast('Escreva o texto do comando.');
-  const reg = { titulo: f.titulo.trim(), tipo: f.tipo, minutos: parseInt(f.minutos) || 0, visivel_aluno: !!f.visivel, conteudo: f.conteudo || null, comando: f.tipo === 'comando' ? f.comando : null, campos: f.tipo === 'exercicio' ? campos : [], destino_kit: f.tipo === 'exercicio' ? (f.destino || null) : null, nota_professor: f.nota || null };
+  const reg = { titulo: f.titulo.trim(), tipo: f.tipo, minutos: parseInt(f.minutos) || 0, visivel_aluno: !!f.visivel, conteudo: f.conteudo || null, comando: f.tipo === 'comando' ? f.comando : null, campos: f.tipo === 'exercicio' ? campos : [], destino_kit: f.tipo === 'exercicio' ? (f.destino || null) : null, nota_professor: f.nota || null, texto_professor: ['comando', 'exercicio'].includes(f.tipo) ? null : (f.texto || null) };
   const ok = await tenta(async () => {
     if (S.p.id) await salvar('blocos', { id: S.p.id, ...reg });
     else { const b = await salvar('blocos', reg); if (S.p.aula) { const n = blocosDaAula(S.p.aula).length; await salvar('aula_blocos', { aula_id: S.p.aula, bloco_id: b.id, ordem: n + 1 }); } }
@@ -1102,7 +1167,7 @@ ACOES.vinculaBloco = async el => { const n = blocosDaAula(S.p.aula).length; cons
 
 TELAS['p-aula-form'] = () => {
   const a = S.p.id ? X.aulas[S.p.id] : null; const f = S.f;
-  if (f._ini !== (a?.id || 'nova')) { f._ini = a?.id || 'nova'; const fid = a?.formato_id || S.p.formato || S.P.formatos[0]?.id; Object.assign(f, { titulo: a?.titulo || '', formato: fid, ordem: a?.ordem ?? (aulasDoFormato(fid).length + 1), duracao: a?.duracao_min ?? X.formatos[fid]?.duracao_min ?? 120, objetivo: a?.objetivo || '', devocional: a?.devocional_ref || '', lp: a?.link_professor || '', la: a?.link_aluno || '', ls: a?.link_slides || '', checklist: (a?.checklist || []).join('\n') }); }
+  if (f._ini !== (a?.id || 'nova')) { f._ini = a?.id || 'nova'; const fid = a?.formato_id || S.p.formato || S.P.formatos[0]?.id; Object.assign(f, { titulo: a?.titulo || '', formato: fid, ordem: a?.ordem ?? (aulasDoFormato(fid).length + 1), duracao: a?.duracao_min ?? X.formatos[fid]?.duracao_min ?? 120, objetivo: a?.objetivo || '', devocional: a?.devocional_ref || '', lp: a?.link_professor || '', la: a?.link_aluno || '', ls: a?.link_slides || '', checklist: (a?.checklist || []).join('\n'), guia: a?.guia_professor || '', anexo: a?.anexo_professor || '' }); }
   return topo({ titulo: a ? 'Editar aula' : 'Nova aula' }) + `<main>
     <div class="campo"><label class="rot" for="at">Título da aula</label><input class="in" id="at" data-f="titulo" value="${esc(f.titulo)}"></div>
     <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px"><div class="campo"><label class="rot" for="af">Formato</label><select class="in" id="af" data-f="formato" ${a ? 'disabled' : ''}>${S.P.formatos.map(x => `<option value="${x.id}" ${x.id === f.formato ? 'selected' : ''}>${esc(x.nome)}</option>`).join('')}</select></div><div class="campo"><label class="rot" for="ao">Nº</label><input class="in" id="ao" type="number" min="1" data-f="ordem" value="${esc(f.ordem)}"></div><div class="campo"><label class="rot" for="ad">Min</label><input class="in" id="ad" type="number" min="0" data-f="duracao" value="${esc(f.duracao)}"></div></div>
@@ -1113,11 +1178,13 @@ TELAS['p-aula-form'] = () => {
     <div class="campo"><label class="t14" for="l2">Apostila do aluno</label><input class="in" id="l2" type="url" data-f="la" value="${esc(f.la)}" placeholder="https://"></div>
     <div class="campo"><label class="t14" for="l3">Apresentação (slides ou PDF)</label><input class="in" id="l3" type="url" data-f="ls" value="${esc(f.ls)}" placeholder="https://"></div>
     <div class="campo"><label class="rot" for="ac">Lista de preparo <span class="mudo" style="font-weight:400">(um item por linha)</span></label><textarea class="in" id="ac" rows="4" data-f="checklist">${esc(f.checklist)}</textarea></div>
+    <div class="campo"><label class="rot" for="ag">Guia da aula <span class="mudo" style="font-weight:400">(como usar, visão geral, materiais e preparação)</span></label><textarea class="in" id="ag" rows="8" data-f="guia">${esc(f.guia)}</textarea></div>
+    <div class="campo"><label class="rot" for="an">Perguntas difíceis <span class="mudo" style="font-weight:400">(anexo da apostila)</span></label><textarea class="in" id="an" rows="8" data-f="anexo">${esc(f.anexo)}</textarea></div>
   </main><div class="rodape"><button class="btn" data-a="salvarAula">${a ? 'Salvar' : 'Salvar e montar os blocos'}</button></div>`;
 };
 ACOES.salvarAula = async () => {
   const f = S.f; if (!f.titulo.trim()) return toast('Dê um título à aula.');
-  const reg = { titulo: f.titulo.trim(), ordem: parseInt(f.ordem) || 1, duracao_min: parseInt(f.duracao) || null, objetivo: f.objetivo || null, devocional_ref: f.devocional || null, link_professor: f.lp || null, link_aluno: f.la || null, link_slides: f.ls || null, checklist: (f.checklist || '').split('\n').map(x => x.trim()).filter(Boolean) };
+  const reg = { titulo: f.titulo.trim(), ordem: parseInt(f.ordem) || 1, duracao_min: parseInt(f.duracao) || null, objetivo: f.objetivo || null, devocional_ref: f.devocional || null, link_professor: f.lp || null, link_aluno: f.la || null, link_slides: f.ls || null, checklist: (f.checklist || '').split('\n').map(x => x.trim()).filter(Boolean), guia_professor: f.guia || null, anexo_professor: f.anexo || null };
   const a = await tenta(() => S.p.id ? salvar('aulas', { id: S.p.id, ...reg }) : salvar('aulas', { formato_id: f.formato, ...reg }), 'Aula salva.');
   if (!a) return;
   if (S.p.id) voltar(); else go('p-bib-aula', { id: a.id }, { substituir: true });
