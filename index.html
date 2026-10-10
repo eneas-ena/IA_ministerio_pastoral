@@ -1,0 +1,1178 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IA no Ministério Pastoral</title>
+<meta name="theme-color" content="#1F2A44">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="IA no Ministério">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Nunito+Sans:wght@400;600;700;800&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
+<script>
+/* =====================================================================
+   CONFIGURAÇÃO — já preenchida. Não precisa mexer.
+   ===================================================================== */
+const CONFIG = {
+  VERSAO: 'v1.0.0',
+  SUPABASE_URL: 'https://ghjbljypxksubmcsvaig.supabase.co',
+  SUPABASE_KEY: 'sb_publishable_qXCYqg1WdmelY9D1mptZXg_U8NdoKby',
+  SCHEMA: 'ia_ministerio',
+  CURSO: 'IA no Ministério Pastoral',
+  PROFESSOR: 'Bispo Enéas Araújo',
+  INSTITUICAO: 'Igreja Vidas'
+};
+</script>
+<style>
+:root{
+  --navy:#1F2A44; --navy2:#2C3A5A; --navy3:#141C30; --linha-escura:#4A5A7E;
+  --bg:#F7F4EE; --bg2:#EDE7DB; --card:#FFFDF9; --borda:#E2DCCF; --borda2:#D8D0BF;
+  --txt:#1F2A44; --txt2:#4A5568; --txt3:#6B7280;
+  --terra:#B4532A; --terra-txt:#FBF3EC; --terra-claro:#E39A72; --terra-fundo:#F3DED2;
+  --verde:#2F6B4F; --verde-fundo:#E3EFE8; --topo:#1F2A44; --topo-txt:#F7F4EE; --topo-txt2:#C9D1DE;
+}
+:root[data-tema="escuro"]{
+  --bg:#121827; --bg2:#1B2337; --card:#1A2236; --borda:#2C3650; --borda2:#3A4562;
+  --txt:#EEF0F5; --txt2:#BCC4D3; --txt3:#9AA6BA; --terra:#D9744A; --terra-txt:#1A1208;
+  --terra-fundo:#3A2418; --verde:#6FBF95; --verde-fundo:#1C3328; --topo:#0E1422; --navy2:#232E48;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--txt);font-family:'Nunito Sans',system-ui,sans-serif;-webkit-text-size-adjust:100%}
+body{min-height:100vh}
+button,input,select,textarea{font-family:inherit;font-size:16px;color:inherit}
+a{color:var(--terra)}
+h1,h2,h3{margin:0}
+.serif{font-family:'Libre Baskerville',Georgia,serif}
+#app{max-width:560px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;background:var(--bg)}
+#app.largo{max-width:none}
+.topo{background:var(--topo);color:var(--topo-txt);padding:12px 16px 18px;display:flex;flex-direction:column;gap:10px;position:sticky;top:0;z-index:5}
+.topo-linha{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:44px}
+.topo h1{font-family:'Libre Baskerville',Georgia,serif;font-size:23px;line-height:1.25;padding:0 4px}
+.topo .sub{margin:0;font-size:14px;color:var(--topo-txt2);padding:0 4px}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--terra)}
+.topo .eyebrow{color:var(--terra-claro);padding:0 4px}
+.versao{font-size:12px;color:var(--topo-txt2)}
+.btn-ic{width:44px;height:44px;border-radius:22px;border:none;background:var(--navy2);color:#F7F4EE;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.btn-ic.claro{background:transparent}
+.etiqueta{font-size:12px;font-weight:800;letter-spacing:1px;padding:4px 8px;border-radius:6px;background:var(--terra-claro);color:var(--navy)}
+main{flex:1;padding:16px 18px 24px;display:flex;flex-direction:column;gap:12px}
+.card{background:var(--card);border:1px solid var(--borda);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.card.escuro{background:var(--navy);border-color:var(--navy);color:#F7F4EE}
+.card.apagado{background:var(--bg2);border-color:var(--bg2)}
+.card.destaque{border:2px solid var(--txt)}
+a.card,button.card{text-decoration:none;color:inherit;text-align:left;cursor:pointer;font:inherit;width:100%}
+.linha{display:flex;align-items:center;gap:10px}
+.entre{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.cresce{flex:1;min-width:0}
+.p0{margin:0}
+.t13{font-size:13px}.t14{font-size:14px}.t15{font-size:15px}.t16{font-size:16px}.t18{font-size:18px}
+.b7{font-weight:700}.b8{font-weight:800}
+.mudo{color:var(--txt2)}.mudo3{color:var(--txt3)}
+.card.escuro .mudo{color:#C9D1DE}
+.btn{min-height:48px;border-radius:12px;border:none;background:var(--terra);color:var(--terra-txt);font-weight:800;font-size:16px;padding:0 18px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
+.btn.sec{background:transparent;border:1px solid var(--borda2);color:var(--txt);font-weight:700}
+.btn.escuro{background:var(--navy);color:#F7F4EE}
+.btn.verde{background:var(--verde);color:#F7F4EE}
+:root[data-tema="escuro"] .btn.verde{color:#0E1422}
+.btn.claro{background:var(--terra-claro);color:var(--navy)}
+.btn.peq{min-height:38px;font-size:14px;padding:0 12px;border-radius:10px}
+.btn.cheio{width:100%}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-link{background:none;border:none;color:var(--terra);font-weight:800;font-size:14px;cursor:pointer;padding:8px 4px;min-height:38px}
+.pilula{font-size:12px;font-weight:700;padding:4px 8px;border-radius:6px;white-space:nowrap}
+.p-verde{background:var(--verde-fundo);color:var(--verde)}
+.p-terra{background:var(--terra);color:var(--terra-txt)}
+.p-terra2{background:var(--terra-fundo);color:var(--terra)}
+.p-cinza{background:var(--bg2);color:var(--txt2)}
+.p-navy{background:var(--navy);color:#F7F4EE}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:13px;padding:6px 10px;border-radius:8px;background:var(--bg2);border:none;cursor:default}
+button.chip{cursor:pointer;min-height:36px;font-weight:700}
+button.chip.ativo{background:var(--navy);color:#F7F4EE}
+.rot{font-size:14px;font-weight:700;display:block;margin-bottom:6px}
+p.rot{margin-bottom:0}
+.aviso svg,.linha svg{flex-shrink:0}
+.palco .conteudo b{color:#FFFFFF}
+.datas>div{display:flex;flex-direction:column;align-items:stretch;gap:6px}
+.datas input.in{height:44px;font-size:15px}
+.campo{display:flex;flex-direction:column}
+input.in,select.in,textarea.in{width:100%;border-radius:12px;border:1px solid var(--borda2);background:var(--card);padding:12px 14px;font-size:16px;color:var(--txt)}
+input.in,select.in{height:48px;padding:0 14px}
+textarea.in{line-height:1.5;resize:vertical}
+input[type=checkbox],input[type=radio]{accent-color:var(--terra);width:22px;height:22px;margin:0;flex-shrink:0}
+.check{display:flex;gap:12px;align-items:flex-start;font-size:15px;line-height:1.45;cursor:pointer}
+.abas{display:flex;gap:4px}
+.abas button{flex:1;background:none;border:none;color:var(--topo-txt2);font-weight:700;font-size:14px;padding:12px 0;border-bottom:3px solid transparent;cursor:pointer}
+.abas button.ativo{color:var(--topo-txt);font-weight:800;border-bottom-color:var(--terra-claro)}
+.seg{display:flex;background:var(--navy2);border-radius:12px;padding:4px}
+.seg button{flex:1;min-height:42px;border-radius:9px;border:none;background:transparent;color:#F7F4EE;font-weight:700;font-size:14px;cursor:pointer}
+.seg button.ativo{background:#F7F4EE;color:var(--navy);font-weight:800}
+nav.base{position:sticky;bottom:0;display:flex;border-top:1px solid var(--borda);background:var(--card);padding-bottom:env(safe-area-inset-bottom)}
+nav.base button{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 0 12px;font-size:12px;font-weight:700;background:none;border:none;color:var(--txt2);cursor:pointer}
+nav.base button.ativo{color:var(--terra);font-weight:800}
+.rodape{position:sticky;bottom:0;padding:12px 18px calc(16px + env(safe-area-inset-bottom));background:var(--card);border-top:1px solid var(--borda);display:flex;flex-direction:column;gap:8px}
+.rodape .linha .btn{flex:1}
+.comando{background:var(--navy);color:#F7F4EE;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.comando .txt{margin:0;font-size:15px;line-height:1.55;white-space:pre-wrap}
+.conteudo{font-size:16px;line-height:1.6;color:var(--txt2)}
+.conteudo p{margin:0 0 10px}.conteudo ul,.conteudo ol{margin:0 0 10px;padding-left:22px}.conteudo li{margin-bottom:4px}
+.conteudo b{color:var(--txt)}
+.aviso{background:var(--bg2);border-radius:12px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.45}
+.barra{height:8px;border-radius:4px;background:var(--navy2)}
+.barra>div{height:8px;border-radius:4px;background:var(--terra-claro)}
+.barra.clara{background:var(--bg2);height:6px}.barra.clara>div{background:var(--terra);height:6px}
+.num{width:30px;font-family:'Libre Baskerville',serif;font-size:20px;color:var(--txt3);flex-shrink:0}
+.circ{width:40px;height:40px;border-radius:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.lista{background:var(--card);border:1px solid var(--borda);border-radius:14px;display:flex;flex-direction:column}
+.lista>*{padding:11px 14px;border-bottom:1px solid var(--bg2)}
+.lista>*:last-child{border-bottom:none}
+.vazio{text-align:center;color:var(--txt2);padding:28px 12px;font-size:15px}
+.grade2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.grade4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.atalho{background:var(--card);border:1px solid var(--borda);border-radius:14px;padding:12px 4px;text-align:center;color:var(--txt);font-size:12px;font-weight:800;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--navy);color:#F7F4EE;padding:12px 18px;border-radius:12px;font-size:15px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:50;max-width:90vw;display:none}
+#carregando{position:fixed;inset:0;background:rgba(20,28,48,.35);display:none;align-items:center;justify-content:center;z-index:40}
+#carregando div{background:var(--card);color:var(--txt);padding:14px 20px;border-radius:12px;font-weight:700}
+/* Entrada */
+.entrada{background:var(--navy);color:#F7F4EE;flex:1;display:flex;flex-direction:column;padding:20px 24px 28px}
+.entrada input.in{background:#24304D;border-color:var(--linha-escura);color:#F7F4EE}
+.entrada label.rot{color:#F7F4EE}
+/* Palco */
+.palco{background:var(--navy3);color:#F7F4EE;min-height:100vh;display:flex;flex-direction:column;padding:14px 18px 22px;gap:14px}
+.palco .caixa{background:var(--navy);border-radius:18px;padding:16px}
+.relogio{font-size:68px;font-weight:800;letter-spacing:2px;font-variant-numeric:tabular-nums;text-align:center;margin:0}
+.relogio.estourou{color:var(--terra-claro)}
+.palco .btn.sec{border-color:var(--linha-escura);color:#F7F4EE}
+/* Certificado */
+.cert{background:#FFFDF9;color:#1F2A44;margin:16px;border:10px double #B4532A;padding:40px 28px;text-align:center;display:flex;flex-direction:column;gap:14px;font-family:'Libre Baskerville',serif}
+.cert .nome{font-size:30px;border-bottom:1px solid #D8D0BF;padding-bottom:8px}
+@media print{
+  .no-print,#toast{display:none!important}
+  body,#app{background:#fff!important;max-width:none}
+  .cert{margin:0;border-width:10px;min-height:90vh;justify-content:center}
+  .card{break-inside:avoid}
+}
+@media (min-width:900px){
+  #app.largo main{max-width:900px;margin:0 auto;width:100%}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<div id="carregando"><div>Carregando…</div></div>
+
+<script>
+/* =====================================================================
+   BASE
+   ===================================================================== */
+let sb = null;
+try { sb = supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY, { db: { schema: CONFIG.SCHEMA }, auth: { persistSession: false } }); } catch (e) { console.error(e); }
+
+const S = {
+  papel: null, token: null,   // sessão
+  P: null,                    // dados do professor
+  A: null,                    // dados do aluno
+  tela: 'login', p: {},       // tela atual e parâmetros
+  f: {},                      // formulário em edição
+  pilha: []
+};
+
+const ls = {
+  get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+  del(k) { try { localStorage.removeItem(k); } catch (e) {} }
+};
+
+function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+function inl(s) { return s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>'); }
+function md(t) {
+  if (!t) return '';
+  const linhas = esc(t).split('\n'); let h = '', lista = null, par = [];
+  const fechaPar = () => { if (par.length) { h += '<p>' + par.map(inl).join('<br>') + '</p>'; par = []; } };
+  const fechaLista = () => { if (lista) { h += `<${lista.tipo}>` + lista.itens.map(i => '<li>' + inl(i) + '</li>').join('') + `</${lista.tipo}>`; lista = null; } };
+  for (const l of linhas) {
+    let m;
+    if ((m = l.match(/^\s*[-•]\s+(.*)$/))) { fechaPar(); if (!lista || lista.tipo !== 'ul') { fechaLista(); lista = { tipo: 'ul', itens: [] }; } lista.itens.push(m[1]); }
+    else if ((m = l.match(/^\s*\d+[.)]\s+(.*)$/))) { fechaPar(); if (!lista || lista.tipo !== 'ol') { fechaLista(); lista = { tipo: 'ol', itens: [] }; } lista.itens.push(m[1]); }
+    else if (!l.trim()) { fechaPar(); fechaLista(); }
+    else { fechaLista(); par.push(l); }
+  }
+  fechaPar(); fechaLista(); return h;
+}
+function toast(msg, ms = 2600) { const t = document.getElementById('toast'); t.textContent = msg; t.style.display = 'block'; clearTimeout(t._t); t._t = setTimeout(() => t.style.display = 'none', ms); }
+function carregando(on) { document.getElementById('carregando').style.display = on ? 'flex' : 'none'; }
+function soDigitos(s) { return String(s || '').replace(/\D/g, ''); }
+function fmtZap(s) { const d = soDigitos(s); if (d.length === 11) return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`; if (d.length === 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`; return s || ''; }
+function linkZap(numero, texto) { let d = soDigitos(numero); if (d.length <= 11) d = '55' + d; return `https://wa.me/${d}?text=${encodeURIComponent(texto)}`; }
+function fmtData(iso, comHora = true) {
+  if (!iso) return 'Data a definir';
+  const d = new Date(iso);
+  const dia = d.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '');
+  const dm = d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+  const h = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }).replace(':', 'h');
+  return `${dia.charAt(0).toUpperCase() + dia.slice(1)}, ${dm}` + (comHora ? ` · ${h}` : '');
+}
+function paraInputLocal(iso) { if (!iso) return ''; const d = new Date(iso); const p = n => String(n).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`; }
+function deInputLocal(v) { return v ? new Date(v).toISOString() : null; }
+function duracao(min) { if (!min) return ''; const h = Math.floor(min / 60), m = min % 60; return h ? `${h}h${m ? String(m).padStart(2, '0') : ''}` : `${m} min`; }
+function cargaTxt(h) { if (h == null) return ''; const n = Number(h); const hh = Math.floor(n), mm = Math.round((n - hh) * 60); return mm ? `${hh}h${String(mm).padStart(2, '0')}` : `${hh}h`; }
+function aleatorio(chars, n) { let s = ''; const a = new Uint32Array(n); crypto.getRandomValues(a); for (let i = 0; i < n; i++) s += chars[a[i] % chars.length]; return s; }
+async function copiar(txt) {
+  try { await navigator.clipboard.writeText(txt); toast('Copiado.'); }
+  catch (e) { const t = document.createElement('textarea'); t.value = txt; document.body.appendChild(t); t.select(); try { document.execCommand('copy'); toast('Copiado.'); } catch (e2) { toast('Não foi possível copiar.'); } t.remove(); }
+}
+function confirma(msg) { return window.confirm(msg); }
+function linkApp() { return location.origin + location.pathname; }
+
+const ERROS = [
+  ['SESSAO_INVALIDA', 'Sua sessão expirou. Entre novamente.'],
+  ['PIN_INCORRETO', 'PIN incorreto.'],
+  ['PIN_CURTO', 'O PIN precisa ter pelo menos 4 dígitos.'],
+  ['PIN_NAO_DEFINIDO', 'O PIN do professor ainda não foi criado.'],
+  ['LOGIN_INVALIDO', 'Código da turma ou PIN incorreto.'],
+  ['MUITAS_TENTATIVAS', 'Muitas tentativas erradas. Aguarde 15 minutos e tente de novo.'],
+  ['pessoas_whatsapp_key', 'Esse WhatsApp já está cadastrado.'],
+  ['matriculas_turma_id_pessoa_id_key', 'Essa pessoa já está matriculada nesta turma.'],
+  ['matriculas_turma_id_pin_key', 'Esse PIN já está em uso nesta turma. Gere outro.'],
+  ['turmas_codigo_key', 'Esse código de turma já existe.'],
+  ['aula_blocos_aula_id_bloco_id_key', 'Esse bloco já está nesta aula.'],
+  ['must be one of the following', 'O schema ia_ministerio ainda não foi liberado na API do Supabase. Veja o passo 3 das instruções.'],
+  ['Invalid schema', 'O schema ia_ministerio ainda não foi liberado na API do Supabase. Veja o passo 3 das instruções.'],
+  ['Failed to fetch', 'Sem conexão com o servidor. Verifique a internet.'],
+  ['Could not find the function', 'O banco ainda não foi preparado. Rode os scripts SQL (passo 2 das instruções).']
+];
+async function rpc(fn, args = {}) {
+  if (!sb) throw new Error('Não foi possível carregar a biblioteca do Supabase. Verifique a internet.');
+  const { data, error } = await sb.rpc(fn, args);
+  if (error) {
+    const m = (error.message || '') + ' ' + (error.details || '') + ' ' + (error.hint || '');
+    if (m.includes('SESSAO_INVALIDA')) { sairLocal(); }
+    const achado = ERROS.find(([k]) => m.includes(k));
+    throw new Error(achado ? achado[1] : (error.message || 'Erro inesperado.'));
+  }
+  return data;
+}
+async function tenta(fn, msgOk) {
+  try { carregando(true); const r = await fn(); if (msgOk) toast(msgOk); return r; }
+  catch (e) { toast(e.message, 4200); console.error(e); return undefined; }
+  finally { carregando(false); }
+}
+
+/* Ícones (traço) */
+const IC = {
+  lua: '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
+  sol: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  voltar: '<path d="M15 18l-6-6 6-6"/>', seta: '<path d="M9 6l6 6-6 6"/>',
+  check: '<path d="M5 12l5 5L20 7"/>', cadeado: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+  livro: '<path d="M4 19V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2z"/><path d="M8 7h6"/>',
+  maleta: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>',
+  cal: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  casa: '<path d="M3 11l9-8 9 8v10H3z"/>', pessoas: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/>',
+  estante: '<path d="M4 4h5v16H4zM10 4h5v16h-5z"/><path d="M16 5l4 1-3 14-4-1"/>',
+  copiar: '<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>',
+  play: '<path d="M7 4l13 8-13 8z" fill="currentColor"/>', balao: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+  medalha: '<circle cx="12" cy="9" r="6"/><path d="M8.5 14L7 22l5-3 5 3-1.5-8"/>', addpessoa: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M19 8v6M16 11h6"/>',
+  lista: '<path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/>',
+  alerta: '<path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/>',
+  info: '<circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/>', link: '<path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/>',
+  cima: '<path d="M18 15l-6-6-6 6"/>', baixo: '<path d="M6 9l6 6 6-6"/>', x: '<path d="M6 6l12 12M18 6L6 18"/>', lapis: '<path d="M4 20h4L19 9l-4-4L4 16z"/>',
+  engr: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+  zap: '<path d="M3 21l1.6-4.8A8.5 8.5 0 1 1 8 19.6z"/>'
+};
+function ic(n, t = 22, cor = 'currentColor', w = 2) { return `<svg width="${t}" height="${t}" viewBox="0 0 24 24" fill="none" stroke="${cor}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n] || ''}</svg>`; }
+
+/* Tema sol/lua */
+function temaAtual() { return ls.get('iam_tema') || 'claro'; }
+function aplicaTema() { document.documentElement.dataset.tema = temaAtual(); }
+function botaoTema() { const e = temaAtual() === 'escuro'; return `<button class="btn-ic" data-a="tema" aria-label="${e ? 'Mudar para modo claro' : 'Mudar para modo escuro'}">${ic(e ? 'sol' : 'lua', 20)}</button>`; }
+
+/* Topo padrão */
+function topo({ titulo, sub, eyebrow, voltar = true, etiqueta, abas, extra = '' }) {
+  return `<header class="topo no-print">
+    <div class="topo-linha">
+      ${voltar ? `<button class="btn-ic claro" data-a="voltar" aria-label="Voltar">${ic('voltar')}</button>` : (etiqueta ? `<span class="etiqueta">${esc(etiqueta)}</span>` : `<span></span>`)}
+      <div class="linha"><span class="versao">${CONFIG.VERSAO}</span>${botaoTema()}</div>
+    </div>
+    ${eyebrow ? `<p class="eyebrow p0">${esc(eyebrow)}</p>` : ''}
+    ${titulo ? `<h1>${esc(titulo)}</h1>` : ''}
+    ${sub ? `<p class="sub">${sub}</p>` : ''}
+    ${extra}
+    ${abas || ''}
+  </header>`;
+}
+
+/* =====================================================================
+   NAVEGAÇÃO
+   ===================================================================== */
+let timers = [];
+function limpaTimers() { timers.forEach(clearInterval); timers = []; }
+function go(tela, p = {}, { substituir = false, manterForm = false } = {}) {
+  if (!substituir && S.tela) S.pilha.push({ tela: S.tela, p: S.p });
+  if (S.pilha.length > 40) S.pilha.shift();
+  S.tela = tela; S.p = p; if (!manterForm) S.f = {};
+  try { history.pushState({ n: S.pilha.length }, ''); } catch (e) {}
+  render(); window.scrollTo(0, 0);
+}
+function voltar() {
+  const ant = S.pilha.pop();
+  if (!ant) { S.tela = S.papel === 'professor' ? 'p-painel' : (S.papel === 'aluno' ? 'a-jornada' : 'login'); S.p = {}; }
+  else { S.tela = ant.tela; S.p = ant.p; }
+  S.f = {}; render(); window.scrollTo(0, 0);
+}
+window.addEventListener('popstate', () => { if (S.pilha.length) voltar(); });
+
+function render() {
+  limpaTimers();
+  const app = document.getElementById('app');
+  const fn = TELAS[S.tela] || TELAS.login;
+  app.className = (S.tela === 'p-palco' || S.tela === 'certificado') ? 'largo' : '';
+  app.innerHTML = fn();
+  const pos = POS[S.tela]; if (pos) pos();
+}
+
+document.addEventListener('click', async ev => {
+  const el = ev.target.closest('[data-a]'); if (!el) return;
+  const a = el.dataset.a; const fn = ACOES[a];
+  if (fn) { ev.preventDefault(); await fn(el, ev); }
+});
+document.addEventListener('input', ev => {
+  const el = ev.target;
+  if (el.dataset.f) { S.f[el.dataset.f] = el.type === 'checkbox' ? el.checked : el.value; }
+  if (el.dataset.resp) agendaResposta(el);
+});
+document.addEventListener('change', ev => {
+  const el = ev.target;
+  if (el.dataset.f) { S.f[el.dataset.f] = el.type === 'checkbox' ? el.checked : el.value; }
+  if (el.dataset.ch && ACOES[el.dataset.ch]) ACOES[el.dataset.ch](el, ev);
+});
+
+/* =====================================================================
+   SESSÃO
+   ===================================================================== */
+function sairLocal() { ls.del('iam_sessao'); S.papel = null; S.token = null; S.P = null; S.A = null; S.pilha = []; S.tela = 'login'; S.p = {}; setTimeout(render, 0); }
+async function carregaProfessor() { S.P = await rpc('prof_dados', { p_token: S.token }); indexa(); }
+async function carregaAluno() { S.A = await rpc('aluno_dados', { p_token: S.token }); }
+
+async function iniciar() {
+  aplicaTema();
+  const ses = ls.get('iam_sessao');
+  if (ses && ses.token) {
+    S.papel = ses.papel; S.token = ses.token;
+    try {
+      carregando(true);
+      if (S.papel === 'professor') { await carregaProfessor(); S.tela = 'p-painel'; }
+      else { await carregaAluno(); S.tela = 'a-jornada'; }
+    } catch (e) { toast(e.message, 4000); ls.del('iam_sessao'); S.papel = null; S.token = null; S.tela = 'login'; }
+    finally { carregando(false); }
+  }
+  if (S.tela === 'login') { S.f = { modo: 'aluno' }; checaPinProfessor(); }
+  render();
+}
+async function checaPinProfessor() { try { S.pinExiste = await rpc('prof_pin_existe'); } catch (e) { S.pinExiste = null; } if (S.tela === 'login') render(); }
+
+/* =====================================================================
+   PROFESSOR — índices e gravação
+   ===================================================================== */
+const X = {}; // índices
+function indexa() {
+  const P = S.P; ['formatos', 'aulas', 'blocos', 'aula_blocos', 'pessoas', 'turmas', 'turma_aulas', 'matriculas', 'liberacoes', 'respostas', 'presencas', 'perguntas'].forEach(k => { P[k] = P[k] || []; X[k] = Object.fromEntries(P[k].map(r => [r.id, r])); });
+}
+function aulasDoFormato(fid) { return S.P.aulas.filter(a => a.formato_id === fid).sort((a, b) => a.ordem - b.ordem); }
+function blocosDaAula(aid) { return S.P.aula_blocos.filter(l => l.aula_id === aid).sort((a, b) => a.ordem - b.ordem).map(l => ({ ...X.blocos[l.bloco_id], _lig: l })).filter(b => b.id); }
+function ta(turmaId, aulaId) { return S.P.turma_aulas.find(t => t.turma_id === turmaId && t.aula_id === aulaId); }
+function matriculasDaTurma(tid) { return S.P.matriculas.filter(m => m.turma_id === tid).map(m => ({ ...m, pessoa: X.pessoas[m.pessoa_id] || {} })).sort((a, b) => (a.pessoa.nome || '').localeCompare(b.pessoa.nome || '')); }
+function respostasDaTurma(tid) { const ms = new Set(S.P.matriculas.filter(m => m.turma_id === tid).map(m => m.id)); return S.P.respostas.filter(r => ms.has(r.matricula_id)); }
+function pendentes(tid) { const rs = tid ? respostasDaTurma(tid) : S.P.respostas; return rs.filter(r => r.enviada && !r.comentario); }
+
+async function salvar(tabela, reg) {
+  const r = await rpc('prof_salvar', { p_token: S.token, p_tabela: tabela, p_reg: reg });
+  const lista = S.P[tabela]; const i = lista.findIndex(x => x.id === r.id);
+  if (i >= 0) lista[i] = r; else lista.push(r);
+  X[tabela][r.id] = r; return r;
+}
+async function excluir(tabela, id) {
+  await rpc('prof_excluir', { p_token: S.token, p_tabela: tabela, p_id: id });
+  S.P[tabela] = S.P[tabela].filter(x => x.id !== id); delete X[tabela][id];
+  if (tabela === 'blocos') S.P.aula_blocos = S.P.aula_blocos.filter(l => l.bloco_id !== id);
+  if (tabela === 'aulas') { S.P.aula_blocos = S.P.aula_blocos.filter(l => l.aula_id !== id); S.P.turma_aulas = S.P.turma_aulas.filter(t => t.aula_id !== id); }
+  if (tabela === 'matriculas') { S.P.respostas = S.P.respostas.filter(r => r.matricula_id !== id); S.P.presencas = S.P.presencas.filter(r => r.matricula_id !== id); }
+}
+async function garanteTA(turmaId, aulaId) { return ta(turmaId, aulaId) || await salvar('turma_aulas', { turma_id: turmaId, aula_id: aulaId }); }
+
+/* =====================================================================
+   TELAS
+   ===================================================================== */
+const TELAS = {}, POS = {}, ACOES = {};
+
+/* ---------- ENTRADA ---------- */
+TELAS.login = () => {
+  const f = S.f; const modo = f.modo || 'aluno';
+  const configOk = sb && CONFIG.SUPABASE_KEY && !CONFIG.SUPABASE_KEY.includes('COLE');
+  let form;
+  if (modo === 'aluno') {
+    form = `<div class="campo"><label class="rot" for="codigo">Código da turma</label>
+      <input class="in" id="codigo" data-f="codigo" value="${esc(f.codigo || '')}" autocomplete="off" autocapitalize="characters" style="letter-spacing:2px;font-size:18px"></div>
+      <div class="campo"><label class="rot" for="pin">PIN</label>
+      <input class="in" id="pin" data-f="pin" type="password" inputmode="numeric" value="${esc(f.pin || '')}" style="letter-spacing:6px;font-size:18px"></div>
+      <button class="btn claro cheio" data-a="entrarAluno" style="margin-top:8px;height:56px;font-size:17px">Entrar</button>
+      <p class="t14" style="text-align:center;color:#C9D1DE;margin-top:auto">Não tem o código e o PIN? Peça ao seu professor.</p>`;
+  } else if (S.pinExiste === false) {
+    form = `<p class="t15" style="line-height:1.5;color:#C9D1DE;margin:0">Primeiro acesso do professor: crie o seu PIN (pelo menos 4 dígitos).</p>
+      <div class="campo"><label class="rot" for="pn">Novo PIN</label><input class="in" id="pn" data-f="pinNovo" type="password" inputmode="numeric" style="letter-spacing:6px;font-size:18px"></div>
+      <div class="campo"><label class="rot" for="pn2">Repita o PIN</label><input class="in" id="pn2" data-f="pinNovo2" type="password" inputmode="numeric" style="letter-spacing:6px;font-size:18px"></div>
+      <button class="btn claro cheio" data-a="criarPin" style="margin-top:8px;height:56px;font-size:17px">Criar PIN e entrar</button>`;
+  } else {
+    form = `<div class="campo"><label class="rot" for="pp">PIN do professor</label>
+      <input class="in" id="pp" data-f="pinProf" type="password" inputmode="numeric" value="${esc(f.pinProf || '')}" style="letter-spacing:6px;font-size:18px"></div>
+      <button class="btn claro cheio" data-a="entrarProf" style="margin-top:8px;height:56px;font-size:17px">Entrar</button>`;
+  }
+  return `<div class="entrada">
+    <div class="entre"><span class="versao" style="color:#C9D1DE">${CONFIG.VERSAO}</span>${botaoTema()}</div>
+    <div style="margin-top:56px;display:flex;flex-direction:column;gap:12px">
+      <p class="eyebrow p0" style="color:var(--terra-claro)">Curso</p>
+      <h1 class="serif" style="font-size:32px;line-height:1.2">${esc(CONFIG.CURSO)}</h1>
+      <p class="p0 t16" style="line-height:1.5;color:#C9D1DE">Seu material, suas aulas e seu kit ministerial num só lugar.</p>
+    </div>
+    ${configOk ? '' : `<div class="aviso" style="margin-top:20px;color:var(--txt)">${ic('alerta', 18)}<span>Falta configurar a conexão com o Supabase no início do arquivo.</span></div>`}
+    <div class="seg" style="margin-top:32px" role="tablist">
+      <button class="${modo === 'aluno' ? 'ativo' : ''}" data-a="modo" data-v="aluno">Sou aluno</button>
+      <button class="${modo === 'prof' ? 'ativo' : ''}" data-a="modo" data-v="prof">Sou professor</button>
+    </div>
+    <form onsubmit="return false" style="margin-top:24px;display:flex;flex-direction:column;gap:16px;flex:1">${form}</form>
+  </div>`;
+};
+ACOES.tema = () => { ls.set('iam_tema', temaAtual() === 'escuro' ? 'claro' : 'escuro'); aplicaTema(); render(); };
+ACOES.voltar = () => voltar();
+ACOES.modo = el => { S.f.modo = el.dataset.v; render(); if (S.f.modo === 'prof' && S.pinExiste == null) checaPinProfessor(); };
+ACOES.entrarAluno = async () => {
+  const codigo = (S.f.codigo || '').trim(), pin = (S.f.pin || '').trim();
+  if (!codigo || !pin) return toast('Preencha o código da turma e o PIN.');
+  const tok = await tenta(() => rpc('aluno_login', { p_codigo: codigo, p_pin: pin })); if (!tok) return;
+  S.papel = 'aluno'; S.token = tok; ls.set('iam_sessao', { papel: 'aluno', token: tok });
+  const ok = await tenta(async () => { await carregaAluno(); return true; }); if (!ok) return;
+  S.pilha = []; go('a-jornada', {}, { substituir: true });
+};
+ACOES.entrarProf = async () => {
+  const pin = (S.f.pinProf || '').trim(); if (!pin) return toast('Digite o PIN.');
+  const tok = await tenta(() => rpc('prof_login', { p_pin: pin })); if (!tok) return;
+  S.papel = 'professor'; S.token = tok; ls.set('iam_sessao', { papel: 'professor', token: tok });
+  const ok = await tenta(async () => { await carregaProfessor(); return true; }); if (!ok) return;
+  S.pilha = []; go('p-painel', {}, { substituir: true });
+};
+ACOES.criarPin = async () => {
+  const a = (S.f.pinNovo || '').trim(), b = (S.f.pinNovo2 || '').trim();
+  if (a.length < 4) return toast('O PIN precisa ter pelo menos 4 dígitos.');
+  if (a !== b) return toast('Os dois PINs não são iguais.');
+  const ok = await tenta(() => rpc('prof_definir_pin', { p_pin_atual: null, p_pin_novo: a })); if (!ok) return;
+  S.pinExiste = true; S.f.pinProf = a; await ACOES.entrarProf();
+};
+
+/* =====================================================================
+   ÁREA DO ALUNO
+   ===================================================================== */
+function navAluno(ativo) {
+  const it = [['a-jornada', 'livro', 'Jornada'], ['a-kit', 'maleta', 'Meu kit'], ['a-plano', 'cal', '30 dias']];
+  return `<nav class="base no-print" aria-label="Navegação do aluno">${it.map(([t, i, n]) => `<button class="${ativo === t ? 'ativo' : ''}" data-a="aba" data-t="${t}">${ic(i)}${n}</button>`).join('')}</nav>`;
+}
+ACOES.aba = el => { S.pilha = []; go(el.dataset.t, {}, { substituir: true }); };
+function aulaAberta(a) { return a.liberada || (a.blocos && a.blocos.length > 0); }
+function respostaDe(bid) { return (S.A.respostas || []).find(r => r.bloco_id === bid); }
+function kit() { if (!S.A.kit) S.A.kit = { pacto: '', perfil: '', comandos: [], plano: {} }; S.A.kit.comandos = S.A.kit.comandos || []; S.A.kit.plano = S.A.kit.plano || {}; return S.A.kit; }
+function elegivel() { const as = S.A.aulas || []; return as.length > 0 && as.every(a => a.presente === true); }
+
+function atualizaAlunoPeriodico() {
+  timers.push(setInterval(async () => {
+    if (document.hidden) return;
+    try { const antes = JSON.stringify((S.A.aulas || []).map(a => [a.liberada, a.blocos.length, a.concluida])); await carregaAluno(); const depois = JSON.stringify((S.A.aulas || []).map(a => [a.liberada, a.blocos.length, a.concluida])); if (antes !== depois && !document.activeElement.matches('textarea,input')) { render(); toast('Novo conteúdo liberado.'); } } catch (e) {}
+  }, 30000));
+}
+
+TELAS['a-jornada'] = () => {
+  const A = S.A; const aulas = A.aulas || []; const conc = aulas.filter(a => a.concluida).length;
+  const pct = aulas.length ? Math.round(conc / aulas.length * 100) : 0;
+  const primeiroNome = (A.pessoa?.nome || '').split(' ')[0];
+  const itens = aulas.map(a => {
+    if (a.concluida) return `<button class="card" data-a="abreAula" data-id="${a.id}"><div class="linha"><div class="circ" style="background:var(--verde);color:#F7F4EE">${ic('check', 20, 'currentColor', 2.5)}</div><div class="cresce"><p class="p0 t13 b7 mudo3">AULA ${a.ordem} · CONCLUÍDA</p><p class="p0 t16 b7">${esc(a.titulo)}</p></div>${ic('seta', 20)}</div></button>`;
+    if (aulaAberta(a)) return `<button class="card escuro" data-a="abreAula" data-id="${a.id}" style="gap:10px"><div class="entre"><span class="t13 b8" style="color:var(--terra-claro);letter-spacing:1px">AULA ${a.ordem} · ${a.liberada ? 'LIBERADA' : 'EM ANDAMENTO'}</span><span class="t13 mudo">${fmtData(a.data_hora)}</span></div><p class="p0 serif" style="font-size:20px;line-height:1.3">${esc(a.titulo)}</p><span class="btn claro peq" style="align-self:flex-start">Abrir aula</span></button>`;
+    return `<div class="card apagado"><div class="linha"><div class="circ" style="background:var(--borda2);color:var(--txt2)">${ic('cadeado', 18)}</div><div class="cresce"><p class="p0 t13 b7 mudo">AULA ${a.ordem} · ${esc(fmtData(a.data_hora).toUpperCase())}</p><p class="p0 t16 b7 mudo">${esc(a.titulo)}</p></div></div></div>`;
+  }).join('');
+  return topo({ voltar: false, eyebrow: A.turma?.nome, titulo: `Olá, ${primeiroNome}`, extra: `<div style="padding:0 4px;display:flex;flex-direction:column;gap:6px"><div class="entre t14" style="color:var(--topo-txt2)"><span>Seu progresso</span><span>${conc} de ${aulas.length} aulas</span></div><div class="barra"><div style="width:${pct}%"></div></div></div>` })
+    + `<main>${itens || '<p class="vazio">As aulas aparecerão aqui.</p>'}<button class="btn-link" data-a="sair" style="align-self:center">Sair</button></main>` + navAluno('a-jornada');
+};
+POS['a-jornada'] = atualizaAlunoPeriodico;
+ACOES.abreAula = el => go('a-aula', { id: el.dataset.id, aba: 'conteudo' });
+ACOES.sair = async () => { if (!confirma('Deseja sair?')) return; try { await rpc('sair', { p_token: S.token }); } catch (e) {} sairLocal(); };
+
+TELAS['a-aula'] = () => {
+  const a = (S.A.aulas || []).find(x => x.id === S.p.id); if (!a) return TELAS['a-jornada']();
+  const aba = S.p.aba || 'conteudo';
+  const conteudo = a.blocos.filter(b => !['comando', 'exercicio'].includes(b.tipo));
+  const comandos = a.blocos.filter(b => b.tipo === 'comando');
+  const exs = a.blocos.filter(b => b.tipo === 'exercicio');
+  const abas = `<nav class="abas" aria-label="Partes da aula">${[['conteudo', 'Conteúdo'], ['comandos', `Comandos (${comandos.length})`], ['exercicios', `Exercícios (${exs.length})`]].map(([k, n]) => `<button class="${aba === k ? 'ativo' : ''}" data-a="abaAula" data-v="${k}">${n}</button>`).join('')}</nav>`;
+  let corpo = '';
+  if (aba === 'conteudo') {
+    corpo = conteudo.map(b => `<section class="card" style="gap:6px"><p class="eyebrow p0">${esc(rotTipo(b.tipo))}${b.minutos ? ' · ' + b.minutos + ' min' : ''}</p><h2 class="serif" style="font-size:19px;line-height:1.35">${esc(b.titulo)}</h2><div class="conteudo">${md(b.conteudo)}</div></section>`).join('') || '<p class="vazio">O conteúdo desta aula será liberado pelo professor.</p>';
+    if (a.link_aluno) corpo += `<a class="btn sec" href="${esc(a.link_aluno)}" target="_blank" rel="noopener">${ic('livro', 18)} Abrir a apostila completa</a>`;
+    corpo += `<div class="card"><label class="rot" for="perg">Pergunta para o professor</label><textarea class="in" id="perg" data-f="pergunta" rows="2" placeholder="Escreva aqui. Ela aparece para o professor durante a aula.">${esc(S.f.pergunta || '')}</textarea><button class="btn peq" data-a="perguntar" style="align-self:flex-end">Enviar pergunta</button></div>`;
+  } else if (aba === 'comandos') {
+    corpo = comandos.map(b => cartaoComando(b)).join('') || '<p class="vazio">Nenhum comando liberado nesta aula ainda.</p>';
+  } else {
+    corpo = exs.map(b => cartaoExercicio(b)).join('') || '<p class="vazio">Nenhum exercício liberado nesta aula ainda.</p>';
+  }
+  return topo({ eyebrow: `Aula ${a.ordem} de ${S.A.aulas.length}`, titulo: a.titulo, abas }) + `<main>${corpo}</main>`;
+};
+POS['a-aula'] = atualizaAlunoPeriodico;
+function rotTipo(t) { return ({ devocional: 'Devocional', exposicao: 'Exposição', pratica: 'Prática', exercicio: 'Exercício', comando: 'Comando', nota: 'Nota', intervalo: 'Intervalo', encerramento: 'Encerramento' })[t] || t; }
+function cartaoComando(b) {
+  return `<div class="card" style="gap:10px"><h2 class="t16 b8">${esc(b.titulo)}</h2>
+    <div class="comando"><div class="entre"><span class="t13 b8" style="color:var(--terra-claro);letter-spacing:1px">COMANDO</span>
+    <button class="btn claro peq" data-a="copiarCmd" data-id="${b.id}">${ic('copiar', 16)} Copiar</button></div><p class="txt">${esc(b.comando)}</p></div>
+    ${b.conteudo ? `<div class="conteudo t15">${md(b.conteudo)}</div>` : ''}
+    <button class="btn sec peq" data-a="guardarCmd" data-id="${b.id}" style="align-self:flex-start">Guardar no meu kit</button></div>`;
+}
+function cartaoExercicio(b) {
+  const r = respostaDe(b.id) || {}; const v = r.valores || {}; const campos = b.campos || [];
+  return `<div class="card" style="gap:12px" id="ex-${b.id}">
+    <div class="entre"><p class="eyebrow p0">Exercício${b.minutos ? ' · ' + b.minutos + ' min' : ''}</p><span class="t13 b7" id="st-${b.id}" style="color:var(--verde)">${r.enviada ? 'Enviado' : (r.valores ? 'Salvo' : '')}</span></div>
+    <h2 class="serif" style="font-size:19px;line-height:1.35">${esc(b.titulo)}</h2>
+    ${b.conteudo ? `<div class="conteudo t15">${md(b.conteudo)}</div>` : ''}
+    ${campos.map((c, i) => `<div class="campo"><label class="rot" for="r-${b.id}-${i}">${esc(c.rotulo)}</label><textarea class="in" id="r-${b.id}-${i}" rows="${c.linhas || 3}" data-resp="${b.id}" data-i="${i}">${esc(v[i] ?? '')}</textarea></div>`).join('')}
+    ${b.destino_kit ? `<div class="aviso">${ic('maleta', 18)}<span>Ao enviar, este texto também vai para o seu kit (${b.destino_kit === 'pacto' ? 'Pacto de uso' : 'Perfil teológico'}).</span></div>` : ''}
+    <div class="card" style="background:var(--bg2);border:none;gap:4px"><p class="p0 t13 b8 mudo">COMENTÁRIO DO PROFESSOR</p><p class="p0 t15" style="line-height:1.5">${r.comentario ? esc(r.comentario) : '<span class="mudo">Aparece aqui depois que o professor ler a sua resposta.</span>'}</p></div>
+    <button class="btn" data-a="enviarResp" data-id="${b.id}">${r.enviada ? 'Enviar de novo' : 'Enviar ao professor'}</button>
+  </div>`;
+}
+ACOES.abaAula = el => { S.p.aba = el.dataset.v; render(); };
+function acharBlocoAluno(id) { for (const a of S.A.aulas) { const b = a.blocos.find(x => x.id === id); if (b) return { a, b }; } return {}; }
+ACOES.copiarCmd = el => { const { b } = acharBlocoAluno(el.dataset.id); if (b) copiar(b.comando); };
+ACOES.guardarCmd = async el => {
+  const { a, b } = acharBlocoAluno(el.dataset.id); if (!b) return; const k = kit();
+  if (k.comandos.some(c => c.texto === b.comando)) return toast('Esse comando já está no seu kit.');
+  k.comandos.push({ titulo: b.titulo, texto: b.comando, tema: a.titulo });
+  await tenta(() => rpc('aluno_salvar_kit', { p_token: S.token, p_kit: { comandos: k.comandos } }), 'Guardado no seu banco de comandos.');
+};
+ACOES.perguntar = async () => {
+  const t = (S.f.pergunta || '').trim(); if (!t) return toast('Escreva a pergunta.');
+  const ok = await tenta(() => rpc('aluno_perguntar', { p_token: S.token, p_texto: t }), 'Pergunta enviada ao professor.');
+  if (ok) { S.f.pergunta = ''; render(); }
+};
+const filaResp = {};
+function valoresDe(bid) { const v = {}; document.querySelectorAll(`[data-resp="${bid}"]`).forEach(t => v[t.dataset.i] = t.value); return v; }
+function agendaResposta(el) {
+  const bid = el.dataset.resp; const st = document.getElementById('st-' + bid); if (st) { st.textContent = 'Salvando…'; st.style.color = 'var(--txt2)'; }
+  clearTimeout(filaResp[bid]);
+  filaResp[bid] = setTimeout(async () => {
+    const v = valoresDe(bid);
+    try {
+      await rpc('aluno_salvar_resposta', { p_token: S.token, p_bloco: bid, p_valores: v, p_enviar: false });
+      const r = respostaDe(bid); if (r) r.valores = v; else S.A.respostas.push({ bloco_id: bid, valores: v, enviada: false });
+      if (st) { st.textContent = 'Salvo'; st.style.color = 'var(--verde)'; }
+    } catch (e) { if (st) { st.textContent = 'Não salvou'; st.style.color = 'var(--terra)'; } }
+  }, 1200);
+}
+ACOES.enviarResp = async el => {
+  const bid = el.dataset.id; clearTimeout(filaResp[bid]); const v = valoresDe(bid);
+  if (!Object.values(v).some(x => (x || '').trim())) return toast('Preencha a resposta antes de enviar.');
+  const ok = await tenta(() => rpc('aluno_salvar_resposta', { p_token: S.token, p_bloco: bid, p_valores: v, p_enviar: true }), 'Resposta enviada ao professor.');
+  if (ok === undefined) return;
+  const r = respostaDe(bid); if (r) { r.valores = v; r.enviada = true; } else S.A.respostas.push({ bloco_id: bid, valores: v, enviada: true });
+  const { b } = acharBlocoAluno(bid);
+  if (b && b.destino_kit) {
+    const texto = (b.campos || []).map((c, i) => (v[i] || '').trim() ? `${c.rotulo}\n${v[i].trim()}` : '').filter(Boolean).join('\n\n');
+    kit()[b.destino_kit] = texto;
+    try { await rpc('aluno_salvar_kit', { p_token: S.token, p_kit: { [b.destino_kit]: texto } }); toast('Enviado e guardado no seu kit.'); } catch (e) {}
+  }
+  render();
+};
+
+/* ---------- KIT ---------- */
+TELAS['a-kit'] = () => {
+  const k = kit(); const f = S.f;
+  if (f._ini !== 'kit') { f._ini = 'kit'; f.pacto = k.pacto || ''; f.perfil = k.perfil || ''; }
+  const cmds = k.comandos.map((c, i) => `<div class="card" style="gap:8px"><div class="entre"><p class="p0 t15 b8">${esc(c.titulo || 'Comando')}</p>${c.tema ? `<span class="pilula p-cinza">${esc(c.tema)}</span>` : ''}</div><p class="p0 t14 mudo" style="white-space:pre-wrap;line-height:1.5">${esc(c.texto)}</p><div class="linha"><button class="btn claro peq" data-a="kitCopiar" data-i="${i}">${ic('copiar', 16)} Copiar</button><button class="btn sec peq" data-a="kitRemover" data-i="${i}">Remover</button></div></div>`).join('');
+  return topo({ voltar: false, titulo: 'Meu kit ministerial', sub: 'As três peças que você constrói no curso e leva para o ministério.' }) + `<main>
+    <div class="card"><div class="entre"><p class="eyebrow p0">Peça 1 · Pacto de uso</p>${k.pacto ? '<span class="pilula p-verde">Preenchido</span>' : ''}</div>
+      <label class="sr" for="kp">Pacto de uso</label><textarea class="in" id="kp" rows="6" data-f="pacto" placeholder="Vou usar a IA para… Não vou usar a IA para…">${esc(f.pacto)}</textarea>
+      <button class="btn sec peq" data-a="kitSalvar" data-k="pacto" style="align-self:flex-end">Salvar pacto</button></div>
+    <div class="card escuro"><div class="entre"><p class="eyebrow p0" style="color:var(--terra-claro)">Peça 2 · Perfil teológico</p><span class="pilula" style="background:var(--terra-claro);color:var(--navy)">Mais usado</span></div>
+      <label class="sr" for="kf">Perfil teológico</label><textarea class="in" id="kf" rows="8" data-f="perfil" style="background:#24304D;border-color:var(--linha-escura);color:#F7F4EE" placeholder="Quem é você, linha teológica, versão bíblica, público e tom, cuidados…">${esc(f.perfil)}</textarea>
+      <div class="linha"><button class="btn claro peq" data-a="kitCopiarPerfil">${ic('copiar', 16)} Copiar para a IA</button><button class="btn sec peq" style="color:#F7F4EE;border-color:var(--linha-escura)" data-a="kitSalvar" data-k="perfil">Salvar perfil</button></div></div>
+    <div class="entre" style="margin-top:6px"><p class="eyebrow p0">Peça 3 · Banco de comandos (${k.comandos.length})</p></div>
+    ${cmds || '<p class="vazio">Use “Guardar no meu kit” nos comandos das aulas, ou acrescente os seus abaixo.</p>'}
+    <div class="card"><p class="p0 t15 b8">Acrescentar um comando meu</p>
+      <label class="rot" for="nct">Título</label><input class="in" id="nct" data-f="novoTit" value="${esc(f.novoTit || '')}">
+      <label class="rot" for="ncx">Comando</label><textarea class="in" id="ncx" rows="3" data-f="novoCmd">${esc(f.novoCmd || '')}</textarea>
+      <button class="btn sec peq" data-a="kitNovo" style="align-self:flex-end">Acrescentar</button></div>
+    <button class="btn sec" data-a="kitImprimir">Baixar o kit completo em PDF</button>
+  </main>` + navAluno('a-kit');
+};
+ACOES.kitSalvar = async el => { const k = el.dataset.k; const v = S.f[k] || ''; const ok = await tenta(() => rpc('aluno_salvar_kit', { p_token: S.token, p_kit: { [k]: v } }), 'Salvo.'); if (ok !== undefined) kit()[k] = v; };
+ACOES.kitCopiarPerfil = () => { const t = (S.f.perfil || '').trim(); if (!t) return toast('Escreva o seu perfil primeiro.'); copiar(t); };
+ACOES.kitCopiar = el => copiar(kit().comandos[+el.dataset.i].texto);
+ACOES.kitRemover = async el => { if (!confirma('Remover este comando do seu kit?')) return; const k = kit(); k.comandos.splice(+el.dataset.i, 1); await tenta(() => rpc('aluno_salvar_kit', { p_token: S.token, p_kit: { comandos: k.comandos } }), 'Removido.'); render(); };
+ACOES.kitNovo = async () => { const t = (S.f.novoCmd || '').trim(); if (!t) return toast('Escreva o comando.'); const k = kit(); k.comandos.push({ titulo: (S.f.novoTit || '').trim() || 'Meu comando', texto: t }); const ok = await tenta(() => rpc('aluno_salvar_kit', { p_token: S.token, p_kit: { comandos: k.comandos } }), 'Acrescentado.'); if (ok !== undefined) { S.f.novoTit = ''; S.f.novoCmd = ''; render(); } };
+ACOES.kitImprimir = () => go('a-kit-imprimir', {});
+TELAS['a-kit-imprimir'] = () => {
+  const k = kit(); return `<div class="no-print" style="padding:12px 16px;display:flex;gap:8px"><button class="btn sec peq" data-a="voltar">${ic('voltar', 18)} Voltar</button><button class="btn peq" data-a="imprimir">Salvar em PDF / imprimir</button></div>
+  <main style="background:#FFFDF9;color:#1F2A44"><p class="eyebrow p0">${esc(CONFIG.CURSO)}</p><h1 class="serif" style="font-size:26px">Kit ministerial de ${esc(S.A.pessoa?.nome || '')}</h1>
+  <h2 class="serif" style="font-size:19px;margin-top:12px">1. Pacto de uso</h2><p style="white-space:pre-wrap;line-height:1.6">${esc(k.pacto || '—')}</p>
+  <h2 class="serif" style="font-size:19px;margin-top:12px">2. Perfil teológico</h2><p style="white-space:pre-wrap;line-height:1.6">${esc(k.perfil || '—')}</p>
+  <h2 class="serif" style="font-size:19px;margin-top:12px">3. Banco de comandos</h2>${k.comandos.map(c => `<div class="card" style="background:#FFFDF9;color:#1F2A44"><p class="p0 b8">${esc(c.titulo || '')}</p><p class="p0" style="white-space:pre-wrap;line-height:1.5">${esc(c.texto)}</p></div>`).join('') || '<p>—</p>'}</main>`;
+};
+ACOES.imprimir = () => window.print();
+
+/* ---------- PLANO DE 30 DIAS ---------- */
+TELAS['a-plano'] = () => {
+  const plano = S.A.plano30 || []; const k = kit(); const sem = S.p.sem || 1; const s = plano.find(x => x.semana === sem) || plano[0];
+  const fim = (S.A.aulas || []).length && S.A.aulas.every(a => a.concluida);
+  const el = elegivel();
+  return topo({ voltar: false, titulo: 'Plano de 30 dias', sub: fim ? 'Um foco por semana. Marque o que for fazendo.' : 'Fica disponível ao fim do curso. Você já pode conhecer.' }) + `<main>
+    <div class="grade4" role="group" aria-label="Semanas">${plano.map(x => `<button class="btn ${x.semana === sem ? '' : 'sec'} peq" data-a="semana" data-v="${x.semana}">Sem. ${x.semana}</button>`).join('')}</div>
+    ${s ? `<div class="card" style="gap:12px"><p class="eyebrow p0">Semana ${s.semana} · ${esc(s.foco)}</p>${s.itens.map((it, i) => { const key = `${s.semana}-${i}`; return `<label class="check"><input type="checkbox" data-ch="planoMarca" data-k="${key}" ${k.plano[key] ? 'checked' : ''}><span>${esc(it)}</span></label>`; }).join('')}</div>` : ''}
+    <div class="card apagado"><div class="linha"><div class="circ" style="width:48px;height:48px;border-radius:24px;background:var(--navy);color:var(--terra-claro)">${ic('medalha', 24)}</div>
+      <div class="cresce"><p class="p0 t16 b8">Certificado · ${cargaTxt(S.A.formato?.carga_horaria_h)}</p><p class="p0 t14 mudo">${el ? 'Disponível. Parabéns!' : 'Disponível ao concluir todas as aulas com presença.'}</p></div>
+      <button class="btn ${el ? '' : 'sec'} peq" data-a="certAluno" ${el ? '' : 'disabled'}>Abrir</button></div></div>
+  </main>` + navAluno('a-plano');
+};
+ACOES.semana = el => { S.p.sem = +el.dataset.v; render(); };
+ACOES.planoMarca = async el => { const k = kit(); k.plano[el.dataset.k] = el.checked; try { await rpc('aluno_salvar_kit', { p_token: S.token, p_kit: { plano: k.plano } }); } catch (e) { toast(e.message); } };
+ACOES.certAluno = () => {
+  const A = S.A; const ult = [...A.aulas].map(a => a.data_hora).filter(Boolean).sort().pop();
+  go('certificado', { nome: A.pessoa?.nome, formato: A.formato?.nome, carga: A.formato?.carga_horaria_h, turma: A.turma?.nome, data: ult });
+};
+
+/* ---------- CERTIFICADO (aluno e professor) ---------- */
+TELAS.certificado = () => {
+  const p = S.p; const data = p.data ? new Date(p.data).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' }) : new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
+  return `<div class="no-print" style="padding:12px 16px;display:flex;gap:8px;justify-content:center"><button class="btn sec peq" data-a="voltar">${ic('voltar', 18)} Voltar</button><button class="btn peq" data-a="imprimir">Salvar em PDF / imprimir</button></div>
+  <div class="cert"><p style="letter-spacing:4px;font-size:14px;color:#B4532A;margin:0;font-family:'Nunito Sans',sans-serif;font-weight:800">CERTIFICADO DE CONCLUSÃO</p>
+  <p style="margin:12px 0 0;font-size:16px">Certificamos que</p><p class="nome" style="margin:0">${esc(p.nome || '')}</p>
+  <p style="margin:0;font-size:17px;line-height:1.7">concluiu o curso <b>${esc(CONFIG.CURSO)}</b>, no formato ${esc(p.formato || '')}, com carga horária de <b>${cargaTxt(p.carga)}</b>${p.turma ? `, na turma ${esc(p.turma)}` : ''}.</p>
+  <p style="margin:8px 0 0;font-style:italic;font-size:15px">“Julgai todas as coisas, retende o que é bom.” — 1 Tessalonicenses 5.21</p>
+  <p style="margin:18px 0 0;font-size:15px">${esc(CONFIG.INSTITUICAO)}, ${data}.</p>
+  <div style="margin:44px auto 0;width:280px;border-top:1px solid #1F2A44;padding-top:8px;font-size:15px">${esc(CONFIG.PROFESSOR)}<br><span style="font-size:13px;color:#4A5568;font-family:'Nunito Sans',sans-serif">Professor responsável</span></div></div>`;
+};
+
+/* =====================================================================
+   ÁREA DO PROFESSOR
+   ===================================================================== */
+function navProf(ativo) {
+  const it = [['p-painel', 'casa', 'Painel'], ['p-turmas', 'pessoas', 'Turmas'], ['p-biblioteca', 'estante', 'Biblioteca']];
+  return `<nav class="base no-print" aria-label="Navegação do professor">${it.map(([t, i, n]) => `<button class="${ativo === t ? 'ativo' : ''}" data-a="aba" data-t="${t}">${ic(i)}${n}</button>`).join('')}</nav>`;
+}
+function proximaAula() {
+  const agora = Date.now() - 3 * 3600e3;
+  const cands = S.P.turma_aulas.filter(t => !t.concluida && X.turmas[t.turma_id]?.ativa && X.aulas[t.aula_id]).sort((a, b) => new Date(a.data_hora || 8.64e15) - new Date(b.data_hora || 8.64e15));
+  return cands.find(t => t.data_hora && new Date(t.data_hora).getTime() >= agora) || cands[0];
+}
+function progressoTurma(tid) { const t = X.turmas[tid]; const as = aulasDoFormato(t.formato_id); const c = as.filter(a => ta(tid, a.id)?.concluida).length; return { c, n: as.length }; }
+
+TELAS['p-painel'] = () => {
+  const pr = proximaAula(); const turmas = S.P.turmas.filter(t => t.ativa);
+  const pend = pendentes(); const perg = S.P.perguntas.filter(q => !q.lida);
+  let prox = '<div class="card apagado"><p class="p0 t15 mudo">Nenhuma aula marcada. Crie uma turma para começar.</p></div>';
+  if (pr) {
+    const a = X.aulas[pr.aula_id], t = X.turmas[pr.turma_id], f = X.formatos[t.formato_id];
+    prox = `<div class="card escuro" style="gap:10px"><div class="entre t13 mudo"><span>${esc(f?.nome || '')} · Aula ${a.ordem} de ${aulasDoFormato(t.formato_id).length}</span><span>${fmtData(pr.data_hora)}</span></div>
+      <p class="p0 serif" style="font-size:20px;line-height:1.3">${esc(a.titulo)}</p><p class="p0 t14 mudo">${esc(t.nome)}${a.duracao_min ? ' · ' + duracao(a.duracao_min) : ''}</p>
+      <div class="linha" style="margin-top:4px"><button class="btn claro" style="flex:1;font-size:15px;white-space:nowrap;padding:0 10px" data-a="palco" data-id="${pr.id}">${ic('play', 18)} Dar aula agora</button><button class="btn sec" style="flex:1;color:#F7F4EE;border-color:var(--linha-escura)" data-a="preparo" data-id="${pr.id}">Preparar</button></div></div>`;
+  }
+  return topo({ voltar: false, etiqueta: 'PROFESSOR', titulo: saudacao() }) + `<main>
+    <p class="eyebrow p0">Próxima aula</p>${prox}
+    ${pend.length ? `<button class="card" data-a="respostas" data-turma=""><div class="linha"><div class="circ" style="background:var(--terra-fundo);color:var(--terra);font-weight:800">${pend.length}</div><div class="cresce"><p class="p0 t16 b8">Respostas para ler</p><p class="p0 t14 mudo">Exercícios enviados pelos alunos</p></div>${ic('seta', 20)}</div></button>` : ''}
+    ${perg.length ? `<button class="card" data-a="perguntasTodas"><div class="linha"><div class="circ" style="background:var(--terra-fundo);color:var(--terra);font-weight:800">${perg.length}</div><div class="cresce"><p class="p0 t16 b8">Perguntas dos alunos</p><p class="p0 t14 mudo">Ainda não lidas</p></div>${ic('seta', 20)}</div></button>` : ''}
+    <div class="entre" style="margin-top:4px"><p class="eyebrow p0">Turmas ativas</p><button class="btn peq" data-a="novaTurma">+ Nova turma</button></div>
+    ${turmas.map(cartaoTurma).join('') || '<p class="vazio">Nenhuma turma ativa.</p>'}
+    <div class="linha" style="justify-content:center;gap:4px"><button class="btn-link" data-a="conta">Trocar PIN</button><span class="mudo3">·</span><button class="btn-link" data-a="atualizar">Atualizar dados</button><span class="mudo3">·</span><button class="btn-link" data-a="sair">Sair</button></div>
+  </main>` + navProf('p-painel');
+};
+function saudacao() { const h = new Date().getHours(); return (h < 12 ? 'Bom dia' : h < 18 ? 'Boa tarde' : 'Boa noite') + ', Bispo'; }
+function cartaoTurma(t) {
+  const f = X.formatos[t.formato_id]; const { c, n } = progressoTurma(t.id); const nm = S.P.matriculas.filter(m => m.turma_id === t.id).length;
+  return `<button class="card" data-a="turma" data-id="${t.id}"><div class="entre"><p class="p0 t16 b8">${esc(t.nome)}</p><span class="pilula p-cinza">${esc(f?.nome || '')}</span></div>
+    <p class="p0 t14 mudo">${nm} aluno${nm === 1 ? '' : 's'} · ${c} de ${n} aulas concluídas${t.ativa ? '' : ' · encerrada'}</p><div class="barra clara"><div style="width:${n ? Math.round(c / n * 100) : 0}%"></div></div></button>`;
+}
+ACOES.atualizar = async () => { await tenta(carregaProfessor, 'Dados atualizados.'); render(); };
+ACOES.turma = el => go('p-turma', { id: el.dataset.id });
+ACOES.novaTurma = () => go('p-nova-turma', {});
+ACOES.preparo = el => go('p-preparo', { ta: el.dataset.id });
+ACOES.palco = el => { S.palco = null; go('p-palco', { ta: el.dataset.id }); };
+ACOES.respostas = el => go('p-respostas', { turma: el.dataset.turma || '' });
+ACOES.perguntasTodas = () => go('p-perguntas', {});
+ACOES.conta = () => go('p-conta', {});
+
+/* ---------- Conta ---------- */
+TELAS['p-conta'] = () => topo({ titulo: 'Trocar PIN do professor' }) + `<main>
+  <div class="campo"><label class="rot" for="pa">PIN atual</label><input class="in" id="pa" type="password" inputmode="numeric" data-f="atual"></div>
+  <div class="campo"><label class="rot" for="pn">Novo PIN</label><input class="in" id="pn" type="password" inputmode="numeric" data-f="novo"></div>
+  <div class="campo"><label class="rot" for="pn2">Repita o novo PIN</label><input class="in" id="pn2" type="password" inputmode="numeric" data-f="novo2"></div>
+  <button class="btn" data-a="trocarPin">Salvar novo PIN</button></main>`;
+ACOES.trocarPin = async () => {
+  const { atual = '', novo = '', novo2 = '' } = S.f; if (novo.length < 4) return toast('O PIN precisa ter pelo menos 4 dígitos.'); if (novo !== novo2) return toast('Os dois PINs não são iguais.');
+  const ok = await tenta(() => rpc('prof_definir_pin', { p_pin_atual: atual, p_pin_novo: novo }), 'PIN alterado.'); if (ok) voltar();
+};
+
+/* ---------- Perguntas ---------- */
+TELAS['p-perguntas'] = () => {
+  const ps = S.P.perguntas.filter(q => !S.p.turma || q.turma_id === S.p.turma);
+  return topo({ titulo: 'Perguntas dos alunos' }) + `<main>${ps.map(q => { const m = X.matriculas[q.matricula_id]; const pe = m ? X.pessoas[m.pessoa_id] : null; return `<div class="card ${q.lida ? 'apagado' : ''}"><div class="entre"><p class="p0 t15 b8">${esc(pe?.nome || 'Aluno')}</p><span class="t13 mudo">${fmtData(q.criado_em)}</span></div><p class="p0 t15" style="line-height:1.5">${esc(q.texto)}</p><p class="p0 t13 mudo">${esc(X.turmas[q.turma_id]?.nome || '')}</p>${q.lida ? '' : `<button class="btn sec peq" data-a="pergLida" data-id="${q.id}" style="align-self:flex-start">Marcar como lida</button>`}</div>`; }).join('') || '<p class="vazio">Nenhuma pergunta.</p>'}</main>`;
+};
+ACOES.pergLida = async el => { const ok = await tenta(() => salvar('perguntas', { id: el.dataset.id, lida: true })); if (ok) render(); };
+
+/* ---------- Turmas ---------- */
+TELAS['p-turmas'] = () => {
+  const ativas = S.P.turmas.filter(t => t.ativa), enc = S.P.turmas.filter(t => !t.ativa);
+  return topo({ voltar: false, etiqueta: 'PROFESSOR', titulo: 'Turmas' }) + `<main>
+    <button class="btn" data-a="novaTurma">+ Nova turma</button>
+    ${ativas.map(cartaoTurma).join('') || '<p class="vazio">Nenhuma turma ativa.</p>'}
+    ${enc.length ? `<p class="eyebrow p0" style="margin-top:8px">Turmas encerradas</p>${enc.map(cartaoTurma).join('')}` : ''}
+  </main>` + navProf('p-turmas');
+};
+
+TELAS['p-turma'] = () => {
+  const t = X.turmas[S.p.id]; if (!t) return TELAS['p-turmas']();
+  const f = X.formatos[t.formato_id]; const aulas = aulasDoFormato(t.formato_id); const pend = pendentes(t.id).length;
+  const lista = aulas.map(a => {
+    const r = ta(t.id, a.id) || {}; const st = r.concluida ? `<span class="t13 b7" style="color:var(--verde)">Concluída</span>` : r.liberada ? `<span class="t13 b7" style="color:var(--terra)">Liberada aos alunos</span>` : `<span class="t13 mudo">${fmtData(r.data_hora)}</span>`;
+    return `<button class="card" data-a="preparoAula" data-turma="${t.id}" data-aula="${a.id}"><div class="linha"><span class="num">${a.ordem}</span><div class="cresce"><p class="p0 t15 b7">${esc(a.titulo)}</p>${st}</div>${ic('seta', 20)}</div></button>`;
+  }).join('');
+  return topo({ titulo: t.nome, sub: `${esc(f?.nome || '')} · ${aulas.length} aulas${t.local ? ' · ' + esc(t.local) : ''}`, extra: `<div style="margin:4px 4px 0;background:var(--navy2);border-radius:14px;padding:12px 14px" class="entre"><div><p class="p0 t13" style="color:#C9D1DE">Código da turma</p><p class="p0" style="font-size:22px;font-weight:800;letter-spacing:3px">${esc(t.codigo)}</p></div><button class="btn claro peq" data-a="copiarCodigo" data-v="${esc(t.codigo)}">${ic('copiar', 16)} Copiar</button></div>` }) + `<main>
+    <div class="grade4">
+      <button class="atalho" data-a="alunos" data-id="${t.id}">${ic('addpessoa', 22, 'var(--terra)')}Alunos</button>
+      <button class="atalho" data-a="presenca" data-id="${t.id}">${ic('lista', 22, 'var(--terra)')}Presença</button>
+      <button class="atalho" data-a="respostas" data-turma="${t.id}">${ic('balao', 22, 'var(--terra)')}Respostas${pend ? ` (${pend})` : ''}</button>
+      <button class="atalho" data-a="certificados" data-id="${t.id}">${ic('medalha', 22, 'var(--terra)')}Certificados</button>
+    </div>
+    <p class="eyebrow p0" style="margin-top:6px">Aulas</p>${lista || '<p class="vazio">Este formato ainda não tem aulas.</p>'}
+    <div class="linha" style="justify-content:center"><button class="btn-link" data-a="editarTurma" data-id="${t.id}">Editar turma</button><span class="mudo3">·</span><button class="btn-link" data-a="encerrarTurma" data-id="${t.id}">${t.ativa ? 'Encerrar turma' : 'Reabrir turma'}</button></div>
+  </main>`;
+};
+ACOES.copiarCodigo = el => copiar(el.dataset.v);
+ACOES.alunos = el => go('p-alunos', { turma: el.dataset.id });
+ACOES.presenca = el => go('p-presenca', { turma: el.dataset.id });
+ACOES.certificados = el => go('p-certificados', { turma: el.dataset.id });
+ACOES.preparoAula = async el => { const r = await tenta(() => garanteTA(el.dataset.turma, el.dataset.aula)); if (r) go('p-preparo', { ta: r.id }); };
+ACOES.encerrarTurma = async el => { const t = X.turmas[el.dataset.id]; if (!confirma(t.ativa ? 'Encerrar esta turma? Os alunos não conseguirão mais entrar.' : 'Reabrir esta turma?')) return; const ok = await tenta(() => salvar('turmas', { id: t.id, ativa: !t.ativa }), 'Feito.'); if (ok) render(); };
+ACOES.editarTurma = el => go('p-editar-turma', { id: el.dataset.id });
+TELAS['p-editar-turma'] = () => {
+  const t = X.turmas[S.p.id]; const f = S.f; if (f._ini !== t.id) { f._ini = t.id; f.nome = t.nome; f.local = t.local || ''; t && aulasDoFormato(t.formato_id).forEach(a => f['d_' + a.id] = paraInputLocal(ta(t.id, a.id)?.data_hora)); }
+  return topo({ titulo: 'Editar turma' }) + `<main>
+    <div class="campo"><label class="rot" for="tn">Nome da turma</label><input class="in" id="tn" data-f="nome" value="${esc(f.nome)}"></div>
+    <div class="campo"><label class="rot" for="tl">Local</label><input class="in" id="tl" data-f="local" value="${esc(f.local)}"></div>
+    <p class="rot p0">Data e hora de cada aula</p>
+    <div class="lista datas">${aulasDoFormato(t.formato_id).map(a => `<div><label class="t14 b7" for="d${a.id}"><span style="color:var(--terra)">${a.ordem}.</span> ${esc(a.titulo)}</label><input class="in" type="datetime-local" id="d${a.id}" data-f="d_${a.id}" value="${esc(f['d_' + a.id] || '')}"></div>`).join('')}</div>
+  </main><div class="rodape"><button class="btn" data-a="salvarEdTurma">Salvar</button></div>`;
+};
+ACOES.salvarEdTurma = async () => {
+  const t = X.turmas[S.p.id]; const f = S.f; if (!f.nome?.trim()) return toast('Dê um nome à turma.');
+  const ok = await tenta(async () => { await salvar('turmas', { id: t.id, nome: f.nome.trim(), local: f.local }); for (const a of aulasDoFormato(t.formato_id)) { const r = await garanteTA(t.id, a.id); const v = deInputLocal(f['d_' + a.id]); if (v !== r.data_hora) await salvar('turma_aulas', { id: r.id, data_hora: v }); } return true; }, 'Turma atualizada.');
+  if (ok) voltar();
+};
+
+/* ---------- Nova turma ---------- */
+function agendaPadrao(formato, data, hora) {
+  const aulas = aulasDoFormato(formato.id); if (!data) return aulas.map(() => '');
+  const base = new Date(`${data}T${hora || '19:00'}`);
+  const intensivo = /intensiv/i.test(formato.nome) && aulas.length === 5;
+  const p = n => String(n).padStart(2, '0');
+  const fmt = d => `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+  if (intensivo) {
+    const dia2 = new Date(base); dia2.setDate(dia2.getDate() + 1);
+    const hs = ['08:00', '10:45', '14:30', '17:15'];
+    return [fmt(base), ...hs.map(h => { const d = new Date(dia2); const [hh, mm] = h.split(':'); d.setHours(+hh, +mm, 0, 0); return fmt(d); })];
+  }
+  return aulas.map((_, i) => { const d = new Date(base); d.setDate(d.getDate() + 7 * i); return fmt(d); });
+}
+function geraCodigo(nome) {
+  const pre = (nome || 'TURMA').normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().replace(/[^A-Z ]/g, ' ').split(/\s+/).filter(w => w.length > 2 && !['INTENSIVO', 'REGULAR', 'TURMA', 'IGREJA'].includes(w))[0] || 'TURMA';
+  let c; do { c = pre.slice(0, 6) + '-' + aleatorio('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', 4); } while (S.P.turmas.some(t => t.codigo === c));
+  return c;
+}
+TELAS['p-nova-turma'] = () => {
+  const f = S.f; const formatos = S.P.formatos;
+  if (!f._ini) { f._ini = 1; f.formato = (formatos.find(x => /intensiv/i.test(x.nome)) || formatos[0])?.id; f.hora = '19:00'; f.datas = []; }
+  const fmt = X.formatos[f.formato]; const aulas = fmt ? aulasDoFormato(fmt.id) : [];
+  if (!f.datas.length || f.datas.length !== aulas.length) f.datas = fmt ? agendaPadrao(fmt, f.data, f.hora) : [];
+  return topo({ titulo: 'Nova turma' }) + `<main>
+    <div class="campo"><label class="rot" for="nt">Nome da turma</label><input class="in" id="nt" data-f="nome" value="${esc(f.nome || '')}" placeholder="Ex.: Intensivo · Igreja Vidas"></div>
+    <fieldset style="border:none;margin:0;padding:0"><legend class="rot">Formato</legend><div class="grade2">${formatos.map(x => `<label class="card ${f.formato === x.id ? 'destaque' : ''}" style="gap:2px;padding:12px;cursor:pointer"><span class="linha t15 b8"><input type="radio" name="fmt" value="${x.id}" data-ch="escolheFormato" ${f.formato === x.id ? 'checked' : ''}>${esc(x.nome)}</span><span class="t13 mudo">${aulasDoFormato(x.id).length} aulas de ${duracao(x.duracao_min)}</span></label>`).join('')}</div></fieldset>
+    <div class="campo"><label class="rot" for="lc">Local</label><input class="in" id="lc" data-f="local" value="${esc(f.local || '')}" placeholder="Endereço ou sala"></div>
+    <div class="grade2"><div class="campo"><label class="rot" for="dt">Data da 1ª aula</label><input class="in" type="date" id="dt" data-f="data" data-ch="recalcDatas" value="${esc(f.data || '')}"></div><div class="campo"><label class="rot" for="hr">Horário</label><input class="in" type="time" id="hr" data-f="hora" data-ch="recalcDatas" value="${esc(f.hora || '')}"></div></div>
+    <div class="entre"><p class="rot p0">Datas das aulas</p><span class="t13 mudo">pode ajustar cada uma</span></div>
+    <div class="lista datas">${aulas.map((a, i) => `<div><label class="t14 b7" for="na${i}"><span style="color:var(--terra)">${a.ordem}.</span> ${esc(a.titulo)}</label><input class="in" type="datetime-local" id="na${i}" data-ch="dataAula" data-i="${i}" value="${esc(f.datas[i] || '')}"></div>`).join('') || '<p class="t14 mudo">Escolha um formato.</p>'}</div>
+  </main><div class="rodape"><button class="btn" data-a="criarTurma">Criar turma e cadastrar alunos</button></div>`;
+};
+ACOES.escolheFormato = el => { S.f.formato = el.value; S.f.datas = []; render(); };
+ACOES.recalcDatas = () => { S.f.datas = []; render(); };
+ACOES.dataAula = el => { S.f.datas[+el.dataset.i] = el.value; };
+ACOES.criarTurma = async () => {
+  const f = S.f; if (!f.nome?.trim()) return toast('Dê um nome à turma.'); if (!f.formato) return toast('Escolha o formato.');
+  const aulas = aulasDoFormato(f.formato);
+  const t = await tenta(async () => {
+    const t = await salvar('turmas', { nome: f.nome.trim(), formato_id: f.formato, local: f.local || null, codigo: geraCodigo(f.nome), ativa: true });
+    for (let i = 0; i < aulas.length; i++) await salvar('turma_aulas', { turma_id: t.id, aula_id: aulas[i].id, data_hora: deInputLocal(f.datas[i]) });
+    return t;
+  }, 'Turma criada.');
+  if (t) { go('p-alunos', { turma: t.id }, { substituir: true }); S.pilha.push({ tela: 'p-turma', p: { id: t.id } }); }
+};
+
+/* ---------- Alunos ---------- */
+function statusAluno(m) { if (m.ultimo_acesso) return '<span class="pilula p-verde">Já acessou</span>'; if (m.convite_enviado_em) return '<span class="pilula p-terra2">Convite enviado</span>'; return '<span class="pilula p-cinza">Sem convite</span>'; }
+TELAS['p-alunos'] = () => {
+  const t = X.turmas[S.p.turma]; const ms = matriculasDaTurma(t.id); const q = (S.f.busca || '').toLowerCase();
+  const fil = ms.filter(m => !q || (m.pessoa.nome || '').toLowerCase().includes(q) || soDigitos(m.pessoa.whatsapp).includes(soDigitos(q) || '#'));
+  return topo({ titulo: 'Alunos da turma', sub: `${esc(t.nome)} · ${ms.length} aluno${ms.length === 1 ? '' : 's'}` }) + `<main>
+    <label class="sr" for="bs">Buscar aluno</label><input class="in" id="bs" data-f="busca" data-ch="rerender" placeholder="Buscar por nome ou WhatsApp" value="${esc(S.f.busca || '')}">
+    ${fil.map(m => `<div class="card"><div class="entre"><p class="p0 t16 b8">${esc(m.pessoa.nome)}</p>${statusAluno(m)}</div>
+      <p class="p0 t14 mudo">${esc(fmtZap(m.pessoa.whatsapp))} · PIN <b class="mostraPin" data-pin="${esc(m.pin)}">••••</b>${m.pessoa.funcao ? ' · ' + esc(m.pessoa.funcao) : ''}</p>
+      <div class="linha" style="flex-wrap:wrap"><button class="btn sec peq" data-a="convite" data-id="${m.id}">${ic('zap', 16)} ${m.convite_enviado_em ? 'Reenviar convite' : 'Enviar convite'}</button><button class="btn sec peq" data-a="verPin" data-pin="${esc(m.pin)}">Ver PIN</button><button class="btn sec peq" data-a="novoPin" data-id="${m.id}">Novo PIN</button><button class="btn-link" data-a="tirarAluno" data-id="${m.id}">Retirar</button></div></div>`).join('') || '<p class="vazio">Nenhum aluno cadastrado ainda.</p>'}
+    <div class="aviso">${ic('info', 18)}<span>Só o professor cadastra. Um mesmo WhatsApp não é cadastrado duas vezes: se a pessoa já fez outro curso, o cadastro dela é reaproveitado.</span></div>
+  </main><div class="rodape"><button class="btn" data-a="novoAluno" data-id="${t.id}">+ Cadastrar aluno</button></div>`;
+};
+ACOES.rerender = () => render();
+ACOES.verPin = el => toast('PIN: ' + el.dataset.pin, 5000);
+function mensagemConvite(nome, codigo, pin) { return `Olá, ${(nome || '').split(' ')[0]}! Você está inscrito no curso ${CONFIG.CURSO}.\nAcesse: ${linkApp()}\nCódigo da turma: ${codigo}\nSeu PIN: ${pin}`; }
+ACOES.convite = async el => {
+  const m = X.matriculas[el.dataset.id]; const p = X.pessoas[m.pessoa_id]; const t = X.turmas[m.turma_id];
+  window.open(linkZap(p.whatsapp, mensagemConvite(p.nome, t.codigo, m.pin)), '_blank');
+  await tenta(() => salvar('matriculas', { id: m.id, convite_enviado_em: new Date().toISOString() })); render();
+};
+function geraPin(turmaId) { const usados = new Set(S.P.matriculas.filter(m => m.turma_id === turmaId).map(m => m.pin)); let p; do { p = String(1000 + Math.floor(Math.random() * 9000)); } while (usados.has(p)); return p; }
+ACOES.novoPin = async el => { const m = X.matriculas[el.dataset.id]; if (!confirma('Gerar um novo PIN? O PIN antigo deixa de funcionar.')) return; const pin = geraPin(m.turma_id); const ok = await tenta(() => salvar('matriculas', { id: m.id, pin }), 'Novo PIN: ' + pin); if (ok) render(); };
+ACOES.tirarAluno = async el => { const m = X.matriculas[el.dataset.id]; if (!confirma(`Retirar ${X.pessoas[m.pessoa_id]?.nome} desta turma? As respostas e presenças dele nesta turma serão apagadas.`)) return; const ok = await tenta(() => excluir('matriculas', m.id).then(() => true), 'Aluno retirado.'); if (ok) render(); };
+ACOES.novoAluno = el => go('p-novo-aluno', { turma: el.dataset.id });
+
+TELAS['p-novo-aluno'] = () => {
+  const t = X.turmas[S.p.turma]; const f = S.f; if (!f.pin) f.pin = geraPin(t.id);
+  const d = soDigitos(f.zap); const existente = d.length >= 10 ? S.P.pessoas.find(p => soDigitos(p.whatsapp) === d) : null;
+  const jaNaTurma = existente && S.P.matriculas.some(m => m.turma_id === t.id && m.pessoa_id === existente.id);
+  const nome = existente ? existente.nome : (f.nome || '[Nome]');
+  return topo({ titulo: 'Cadastrar aluno', sub: esc(t.nome) }) + `<main>
+    <div class="campo"><label class="rot" for="zp">WhatsApp (com DDD)</label><input class="in" id="zp" type="tel" inputmode="tel" data-f="zap" data-ch="rerender" value="${esc(f.zap || '')}" placeholder="(85) 99999-9999"></div>
+    ${existente ? `<div class="aviso">${ic('info', 18)}<span>${jaNaTurma ? `<b>${esc(existente.nome)}</b> já está nesta turma.` : `Esse WhatsApp já é de <b>${esc(existente.nome)}</b>. O cadastro será reaproveitado e ele só será matriculado nesta turma.`}</span></div>` : `
+    <div class="campo"><label class="rot" for="nm">Nome completo</label><input class="in" id="nm" data-f="nome" value="${esc(f.nome || '')}"></div>
+    <div class="campo"><label class="rot" for="fc">Função na igreja <span class="mudo" style="font-weight:400">(opcional)</span></label><input class="in" id="fc" data-f="funcao" value="${esc(f.funcao || '')}" placeholder="Ex.: Líder de célula"></div>`}
+    <div class="card escuro"><div class="entre"><div><p class="p0 t13 mudo">PIN gerado pelo app</p><p class="p0" style="font-size:28px;font-weight:800;letter-spacing:8px">${esc(f.pin)}</p></div><button class="btn sec peq" style="color:#F7F4EE;border-color:var(--linha-escura)" data-a="outroPin">Gerar outro</button></div></div>
+    <p class="rot p0">Mensagem de convite</p><div class="card" style="white-space:pre-line;font-size:14px;line-height:1.5;color:var(--txt2)">${esc(mensagemConvite(nome, t.codigo, f.pin))}</div>
+  </main><div class="rodape"><button class="btn verde" data-a="salvarAluno" data-env="1" ${jaNaTurma ? 'disabled' : ''}>${ic('zap', 18)} Salvar e enviar pelo WhatsApp</button><button class="btn sec" data-a="salvarAluno" data-env="0" ${jaNaTurma ? 'disabled' : ''}>Salvar e cadastrar outro</button></div>`;
+};
+POS['p-novo-aluno'] = () => { const el = document.getElementById(S.f._foco || ''); if (el) { el.focus(); const v = el.value; el.setSelectionRange?.(v.length, v.length); } };
+ACOES.outroPin = () => { S.f.pin = geraPin(S.p.turma); render(); };
+ACOES.salvarAluno = async el => {
+  const t = X.turmas[S.p.turma]; const f = S.f; const d = soDigitos(f.zap); const enviar = el.dataset.env === '1';
+  if (d.length < 10) return toast('Informe o WhatsApp com DDD.');
+  let pessoa = S.P.pessoas.find(p => soDigitos(p.whatsapp) === d);
+  if (!pessoa && !(f.nome || '').trim()) return toast('Informe o nome do aluno.');
+  const m = await tenta(async () => {
+    if (!pessoa) pessoa = await salvar('pessoas', { nome: f.nome.trim(), whatsapp: d, funcao: (f.funcao || '').trim() || null });
+    return await salvar('matriculas', { turma_id: t.id, pessoa_id: pessoa.id, pin: f.pin, convite_enviado_em: enviar ? new Date().toISOString() : null });
+  }, `${pessoa?.nome || f.nome} cadastrado.`);
+  if (!m) return;
+  if (enviar) { window.open(linkZap(d, mensagemConvite(pessoa.nome, t.codigo, m.pin)), '_blank'); voltar(); }
+  else { S.f = { _foco: 'zp' }; render(); }
+};
+
+/* ---------- Presença ---------- */
+TELAS['p-presenca'] = () => {
+  const t = X.turmas[S.p.turma]; const aulas = aulasDoFormato(t.formato_id); const f = S.f;
+  if (!f.aula) { const pr = aulas.find(a => !ta(t.id, a.id)?.concluida) || aulas[0]; f.aula = pr?.id; }
+  const ms = matriculasDaTurma(t.id);
+  if (f._ini !== f.aula) { f._ini = f.aula; f.marca = {}; ms.forEach(m => { const p = S.P.presencas.find(x => x.turma_id === t.id && x.aula_id === f.aula && x.matricula_id === m.id); f.marca[m.id] = p ? p.presente : true; }); }
+  const pres = Object.values(f.marca).filter(Boolean).length;
+  return topo({ titulo: 'Presença', sub: esc(t.nome) }) + `<main>
+    <div class="campo"><label class="rot" for="au">Aula</label><select class="in" id="au" data-f="aula" data-ch="rerender">${aulas.map(a => `<option value="${a.id}" ${a.id === f.aula ? 'selected' : ''}>Aula ${a.ordem} · ${esc(a.titulo)}</option>`).join('')}</select></div>
+    <div class="entre"><span class="t14 b7 mudo">${pres} presentes · ${ms.length - pres} ausentes</span><button class="btn-link" data-a="todosPresentes">Marcar todos</button></div>
+    ${ms.map(m => `<label class="card" style="flex-direction:row;align-items:center;gap:12px;cursor:pointer"><input type="checkbox" data-ch="marcaPres" data-id="${m.id}" ${f.marca[m.id] ? 'checked' : ''} style="accent-color:var(--verde);width:24px;height:24px"><span class="cresce t16 b7">${esc(m.pessoa.nome)}</span><span class="t13" style="color:${f.marca[m.id] ? 'var(--verde)' : 'var(--terra)'}">${f.marca[m.id] ? 'Presente' : 'Ausente'}</span></label>`).join('') || '<p class="vazio">Cadastre os alunos primeiro.</p>'}
+    <p class="p0 t13 mudo">O certificado é liberado para quem tiver presença em todas as aulas.</p>
+  </main><div class="rodape"><button class="btn" data-a="salvarPres">Salvar chamada</button></div>`;
+};
+ACOES.marcaPres = el => { S.f.marca[el.dataset.id] = el.checked; render(); };
+ACOES.todosPresentes = () => { Object.keys(S.f.marca).forEach(k => S.f.marca[k] = true); render(); };
+ACOES.salvarPres = async () => {
+  const t = X.turmas[S.p.turma]; const f = S.f;
+  const ok = await tenta(async () => { for (const [mid, v] of Object.entries(f.marca)) { const p = S.P.presencas.find(x => x.turma_id === t.id && x.aula_id === f.aula && x.matricula_id === mid); if (!p || p.presente !== v) await salvar('presencas', { ...(p ? { id: p.id } : { turma_id: t.id, aula_id: f.aula, matricula_id: mid }), presente: v }); } return true; }, 'Chamada salva.');
+  if (ok) render();
+};
+
+/* ---------- Respostas ---------- */
+TELAS['p-respostas'] = () => {
+  const tid = S.p.turma; const filtro = S.f.filtro || 'novas';
+  let rs = (tid ? respostasDaTurma(tid) : S.P.respostas).filter(r => r.enviada);
+  if (filtro === 'novas') rs = rs.filter(r => !r.comentario); else if (filtro === 'comentadas') rs = rs.filter(r => r.comentario);
+  const cards = rs.map(r => {
+    const m = X.matriculas[r.matricula_id]; const p = m ? X.pessoas[m.pessoa_id] : {}; const b = X.blocos[r.bloco_id] || {}; const v = r.valores || {};
+    return `<div class="card" style="gap:10px"><div class="entre"><p class="p0 t16 b8">${esc(p?.nome || '')}</p>${r.comentario ? '<span class="pilula p-verde">Comentada</span>' : '<span class="pilula p-terra">Nova</span>'}</div>
+      <p class="p0 t13 mudo">${esc(b.titulo || '')}${!tid && m ? ' · ' + esc(X.turmas[m.turma_id]?.nome || '') : ''}</p>
+      ${(b.campos || []).map((c, i) => (v[i] || '').trim() ? `<div><p class="p0 t13 b8">${esc(c.rotulo)}</p><p class="p0 t15 mudo" style="white-space:pre-wrap;line-height:1.5">${esc(v[i])}</p></div>` : '').join('')}
+      <label class="rot" for="cm${r.id}" style="margin:0">Seu comentário</label><textarea class="in" id="cm${r.id}" rows="3" data-f="c_${r.id}">${esc(S.f['c_' + r.id] ?? r.comentario ?? '')}</textarea>
+      <button class="btn peq" data-a="comentar" data-id="${r.id}" style="align-self:flex-end">${r.comentario ? 'Atualizar comentário' : 'Enviar comentário'}</button></div>`;
+  }).join('');
+  return topo({ titulo: 'Respostas', sub: tid ? esc(X.turmas[tid]?.nome || '') : 'Todas as turmas' }) + `<main>
+    <div class="chips" role="group" aria-label="Filtro">${[['novas', 'Novas'], ['comentadas', 'Comentadas'], ['todas', 'Todas']].map(([k, n]) => `<button class="chip ${filtro === k ? 'ativo' : ''}" data-a="filtroResp" data-v="${k}">${n}</button>`).join('')}</div>
+    ${cards || '<p class="vazio">Nenhuma resposta aqui.</p>'}</main>`;
+};
+ACOES.filtroResp = el => { S.f.filtro = el.dataset.v; render(); };
+ACOES.comentar = async el => { const id = el.dataset.id; const c = (S.f['c_' + id] ?? X.respostas[id].comentario ?? '').trim(); if (!c) return toast('Escreva o comentário.'); const ok = await tenta(() => salvar('respostas', { id, comentario: c, comentado_em: new Date().toISOString() }), 'Comentário enviado.'); if (ok) render(); };
+
+/* ---------- Certificados ---------- */
+TELAS['p-certificados'] = () => {
+  const t = X.turmas[S.p.turma]; const f = X.formatos[t.formato_id]; const aulas = aulasDoFormato(t.formato_id); const ms = matriculasDaTurma(t.id);
+  return topo({ titulo: 'Certificados', sub: `${esc(t.nome)} · ${cargaTxt(f?.carga_horaria_h)}` }) + `<main>
+    ${ms.map(m => { const n = aulas.filter(a => S.P.presencas.some(p => p.turma_id === t.id && p.aula_id === a.id && p.matricula_id === m.id && p.presente)).length; const ok = n === aulas.length && aulas.length > 0; return `<div class="card"><div class="entre"><p class="p0 t16 b8">${esc(m.pessoa.nome)}</p>${ok ? '<span class="pilula p-verde">Apto</span>' : `<span class="pilula p-cinza">${n} de ${aulas.length} presenças</span>`}</div><button class="btn ${ok ? '' : 'sec'} peq" data-a="certProf" data-id="${m.id}" style="align-self:flex-start">Abrir certificado</button></div>`; }).join('') || '<p class="vazio">Nenhum aluno na turma.</p>'}
+    <p class="p0 t13 mudo">O aluno apto também consegue baixar o próprio certificado na aba “30 dias”.</p></main>`;
+};
+ACOES.certProf = el => { const m = X.matriculas[el.dataset.id]; const t = X.turmas[m.turma_id]; const f = X.formatos[t.formato_id]; const ult = S.P.turma_aulas.filter(x => x.turma_id === t.id).map(x => x.data_hora).filter(Boolean).sort().pop(); go('certificado', { nome: X.pessoas[m.pessoa_id]?.nome, formato: f?.nome, carga: f?.carga_horaria_h, turma: t.nome, data: ult }); };
+
+/* ---------- Preparo ---------- */
+TELAS['p-preparo'] = () => {
+  const r = X.turma_aulas[S.p.ta]; if (!r) return TELAS['p-painel']();
+  const a = X.aulas[r.aula_id], t = X.turmas[r.turma_id]; const bs = blocosDaAula(a.id); const total = bs.reduce((s, b) => s + (b.minutos || 0), 0);
+  const chk = a.checklist || []; const feito = r.checklist_feito || [];
+  const aba = S.p.aba || 'roteiro';
+  const abas = `<nav class="abas">${[['roteiro', 'Roteiro'], ['materiais', 'Materiais']].map(([k, n]) => `<button class="${aba === k ? 'ativo' : ''}" data-a="abaPrep" data-v="${k}">${n}</button>`).join('')}</nav>`;
+  let corpo;
+  if (aba === 'roteiro') {
+    corpo = `${chk.length ? `<div class="card"><div class="entre"><p class="p0 t14 b8">Pronto para a aula</p><span class="t13 b7 mudo">${feito.length} de ${chk.length}</span></div>${chk.map((c, i) => `<label class="check t14"><input type="checkbox" data-ch="marcaChk" data-i="${i}" ${feito.includes(i) ? 'checked' : ''}><span>${esc(c)}</span></label>`).join('')}</div>` : ''}
+      <div class="entre"><p class="eyebrow p0">Blocos da aula</p><span class="t13 mudo">${total} min planejados</span></div>
+      ${bs.map(b => `<div class="card" style="gap:6px"><div class="linha"><span class="t13 b8 mudo" style="width:52px">${b.minutos ? b.minutos + ' min' : '—'}</span><p class="p0 cresce t15 b7">${esc(b.titulo)}</p>${b.visivel_aluno ? '<span class="pilula p-cinza">ALUNO VÊ</span>' : '<span class="pilula p-terra">SÓ PROFESSOR</span>'}</div>${b.nota_professor ? `<p class="p0 t14 mudo" style="line-height:1.45;padding-left:62px">${esc(b.nota_professor)}</p>` : ''}</div>`).join('') || '<p class="vazio">Esta aula ainda não tem blocos. Monte-os na Biblioteca.</p>'}
+      <label class="card" style="flex-direction:row;align-items:center;gap:12px;cursor:pointer"><input type="checkbox" data-ch="liberaAula" ${r.liberada ? 'checked' : ''}><span class="cresce"><span class="t15 b8">Liberar a aula inteira para os alunos</span><br><span class="t13 mudo">Os alunos veem a apostila, os comandos e os exercícios.</span></span></label>
+      <label class="card" style="flex-direction:row;align-items:center;gap:12px;cursor:pointer"><input type="checkbox" data-ch="concluiAula" ${r.concluida ? 'checked' : ''}><span class="cresce t15 b8">Aula concluída</span></label>
+      <div class="campo"><label class="rot" for="dh">Data e hora desta aula</label><input class="in" type="datetime-local" id="dh" data-ch="dataTA" value="${esc(paraInputLocal(r.data_hora))}"></div>`;
+  } else {
+    const ln = (u, n) => u ? `<a class="card" href="${esc(u)}" target="_blank" rel="noopener"><div class="linha">${ic('link', 20, 'var(--terra)')}<span class="cresce t15 b7">${n}</span>${ic('seta', 18)}</div></a>` : `<div class="card apagado"><span class="t15 mudo">${n}: não cadastrado</span></div>`;
+    corpo = ln(a.link_professor, 'Apostila do professor') + ln(a.link_aluno, 'Apostila do aluno') + ln(a.link_slides, 'Apresentação (slides)') + `<button class="btn sec" data-a="editarAula" data-id="${a.id}">Editar links e dados da aula</button>`;
+  }
+  return topo({ eyebrow: `Preparo · Aula ${a.ordem}${a.duracao_min ? ' · ' + duracao(a.duracao_min) : ''}`, titulo: a.titulo, sub: `${esc(t.nome)} · ${fmtData(r.data_hora)}`, abas }) + `<main>${corpo}</main>
+    <div class="rodape"><button class="btn escuro" data-a="palco" data-id="${r.id}">${ic('play', 18, 'var(--terra-claro)')} Iniciar modo palco</button></div>`;
+};
+ACOES.abaPrep = el => { S.p.aba = el.dataset.v; render(); };
+ACOES.marcaChk = async el => { const r = X.turma_aulas[S.p.ta]; const i = +el.dataset.i; let f = [...(r.checklist_feito || [])]; f = el.checked ? [...new Set([...f, i])] : f.filter(x => x !== i); const ok = await tenta(() => salvar('turma_aulas', { id: r.id, checklist_feito: f })); if (ok) render(); };
+ACOES.liberaAula = async el => { const r = X.turma_aulas[S.p.ta]; const ok = await tenta(() => salvar('turma_aulas', { id: r.id, liberada: el.checked }), el.checked ? 'Aula liberada para os alunos.' : 'Liberação retirada.'); if (ok) render(); };
+ACOES.concluiAula = async el => { const r = X.turma_aulas[S.p.ta]; const ok = await tenta(() => salvar('turma_aulas', { id: r.id, concluida: el.checked, ...(el.checked ? { liberada: true } : {}) }), 'Atualizado.'); if (ok) render(); };
+ACOES.dataTA = async el => { const r = X.turma_aulas[S.p.ta]; const ok = await tenta(() => salvar('turma_aulas', { id: r.id, data_hora: deInputLocal(el.value) }), 'Data atualizada.'); if (ok) render(); };
+
+/* ---------- Modo palco ---------- */
+function palcoEstado() {
+  const r = X.turma_aulas[S.p.ta]; const bs = blocosDaAula(r.aula_id);
+  if (!S.palco || S.palco.ta !== r.id) S.palco = { ta: r.id, i: 0, restante: (bs[0]?.minutos || 0) * 60, rodando: true, inicio: Date.now(), verConteudo: false, verPerg: false };
+  return { r, bs };
+}
+function mmss(s) { const neg = s < 0; s = Math.abs(Math.round(s)); return (neg ? '-' : '') + String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); }
+TELAS['p-palco'] = () => {
+  const { r, bs } = palcoEstado(); const a = X.aulas[r.aula_id], t = X.turmas[r.turma_id]; const pc = S.palco; const b = bs[pc.i];
+  const decorrido = Math.floor((Date.now() - pc.inicio) / 60000);
+  const perg = S.P.perguntas.filter(q => q.turma_id === t.id && !q.lida);
+  const liberado = b && (r.liberada || S.P.liberacoes.some(l => l.turma_id === t.id && l.bloco_id === b.id));
+  const prox = bs[pc.i + 1];
+  if (!b) return `<div class="palco"><div class="entre"><button class="btn sec peq" data-a="voltar">Voltar</button>${botaoTema()}</div><p class="vazio" style="color:#C9D1DE">Esta aula ainda não tem blocos. Monte-os na Biblioteca.</p></div>`;
+  const tot = (b.minutos || 0) * 60;
+  return `<div class="palco">
+    <div class="entre"><span class="linha t13 b8" style="background:var(--terra-claro);color:var(--navy3);padding:6px 10px;border-radius:8px;gap:6px"><span style="width:8px;height:8px;border-radius:4px;background:var(--navy3)"></span>AO VIVO · <span id="decorrido">${duracao(decorrido) || '0 min'}</span></span>
+      <div class="linha"><span class="versao">${CONFIG.VERSAO}</span><button class="btn sec peq" data-a="encerrarPalco">Encerrar</button></div></div>
+    <div><p class="p0 t13 b8" style="letter-spacing:1px;color:#C9D1DE">BLOCO ${pc.i + 1} DE ${bs.length} · ${esc(rotTipo(b.tipo).toUpperCase())}</p><h1 class="serif" style="font-size:26px;line-height:1.25;margin-top:6px">${esc(b.titulo)}</h1></div>
+    ${b.minutos ? `<div class="caixa" style="display:flex;flex-direction:column;align-items:center;gap:10px"><p class="relogio ${pc.restante < 0 ? 'estourou' : ''}" id="relogio">${mmss(pc.restante)}</p><p class="p0 t14" style="color:#C9D1DE" id="relogio-sub">${pc.restante < 0 ? 'tempo esgotado' : `restantes de ${b.minutos} minutos`}</p><div class="barra" style="width:100%"><div id="relogio-barra" style="width:${tot ? Math.min(100, Math.max(0, (1 - pc.restante / tot) * 100)) : 0}%"></div></div><div class="linha"><button class="btn sec peq" data-a="pausa">${pc.rodando ? 'Pausar' : 'Retomar'}</button><button class="btn sec peq" data-a="mais5">+5 min</button><button class="btn sec peq" data-a="zerar">Reiniciar</button></div></div>` : ''}
+    ${b.nota_professor ? `<div class="caixa"><p class="p0 t13 b8" style="letter-spacing:1px;color:var(--terra-claro)">NOTA DO PROFESSOR</p><p class="p0 t16" style="line-height:1.5;margin-top:6px">${esc(b.nota_professor)}</p></div>` : ''}
+    <div class="caixa"><button class="btn-link" style="color:var(--terra-claro);padding:0" data-a="verConteudo">${pc.verConteudo ? 'Esconder conteúdo do bloco' : 'Ver conteúdo do bloco'}</button>${pc.verConteudo ? `<div class="conteudo" style="color:#E6E9F0;margin-top:8px">${md(b.conteudo)}${b.comando ? `<div class="comando" style="background:var(--navy2)"><p class="txt">${esc(b.comando)}</p></div>` : ''}</div>` : ''}</div>
+    ${b.visivel_aluno ? `<button class="btn ${liberado ? 'verde' : 'claro'}" data-a="liberarBloco" ${r.liberada ? 'disabled' : ''}>${liberado ? ic('check', 18, 'currentColor', 2.5) + (r.liberada ? ' Aula inteira liberada' : ' Liberado para a turma (toque para retirar)') : 'Liberar este bloco para a turma'}</button>` : '<p class="p0 t13" style="color:#C9D1DE;text-align:center">Bloco só do professor: os alunos não veem.</p>'}
+    <button class="caixa entre" style="border:none;color:#F7F4EE;cursor:pointer;font:inherit" data-a="verPerg"><span class="linha t15 b7">${ic('balao', 20, 'var(--terra-claro)')} Perguntas da turma</span><span class="t14 b8" style="background:var(--terra-claro);color:var(--navy3);padding:2px 10px;border-radius:10px" id="nperg">${perg.length}</span></button>
+    ${pc.verPerg ? `<div class="caixa" style="display:flex;flex-direction:column;gap:10px">${perg.map(q => { const m = X.matriculas[q.matricula_id]; return `<div><p class="p0 t13 b8" style="color:var(--terra-claro)">${esc(X.pessoas[m?.pessoa_id]?.nome || 'Aluno')}</p><p class="p0 t15" style="line-height:1.45">${esc(q.texto)}</p><button class="btn-link" style="color:#C9D1DE;padding:4px 0" data-a="pergLidaPalco" data-id="${q.id}">Marcar como respondida</button></div>`; }).join('') || '<p class="p0 t14" style="color:#C9D1DE">Nenhuma pergunta nova.</p>'}</div>` : ''}
+    <div class="linha" style="margin-top:auto"><button class="btn sec" style="width:56px;height:56px;padding:0" data-a="blocoAnt" aria-label="Bloco anterior" ${pc.i === 0 ? 'disabled' : ''}>${ic('voltar')}</button>
+      <button class="btn" style="flex:1;min-height:56px;background:#F7F4EE;color:var(--navy3);flex-direction:column;align-items:flex-start;gap:0;text-align:left" data-a="blocoProx" ${prox ? '' : 'disabled'}><span class="t13 b8" style="color:#4A5568">${prox ? `PRÓXIMO${prox.minutos ? ' · ' + prox.minutos + ' MIN' : ''}` : 'FIM DA AULA'}</span><span class="t15 b8">${prox ? esc(prox.titulo) : 'Toque em Encerrar'}</span></button></div>
+  </div>`;
+};
+POS['p-palco'] = () => {
+  let ult = Date.now();
+  timers.push(setInterval(() => {
+    const pc = S.palco; const agora = Date.now(); const dt = (agora - ult) / 1000; ult = agora; if (!pc) return;
+    if (pc.rodando) pc.restante -= dt;
+    const el = document.getElementById('relogio'); if (el) { el.textContent = mmss(pc.restante); el.classList.toggle('estourou', pc.restante < 0); }
+    const r = X.turma_aulas[pc.ta]; const b = blocosDaAula(r.aula_id)[pc.i]; const tot = (b?.minutos || 0) * 60;
+    const br = document.getElementById('relogio-barra'); if (br && tot) br.style.width = Math.min(100, Math.max(0, (1 - pc.restante / tot) * 100)) + '%';
+    const sub = document.getElementById('relogio-sub'); if (sub && b) sub.textContent = pc.restante < 0 ? 'tempo esgotado' : `restantes de ${b.minutos} minutos`;
+    const dc = document.getElementById('decorrido'); if (dc) dc.textContent = duracao(Math.floor((agora - pc.inicio) / 60000)) || '0 min';
+  }, 1000));
+  timers.push(setInterval(async () => { try { const d = await rpc('prof_dados', { p_token: S.token }); S.P.perguntas = d.perguntas; S.P.liberacoes = d.liberacoes; indexa(); const pc = S.palco; const t = X.turma_aulas[pc.ta].turma_id; const n = S.P.perguntas.filter(q => q.turma_id === t && !q.lida).length; const el = document.getElementById('nperg'); if (el && el.textContent !== String(n)) { el.textContent = n; if (pc.verPerg) render(); else toast('Nova pergunta da turma.'); } } catch (e) {} }, 20000));
+};
+function vaiBloco(i) { const r = X.turma_aulas[S.palco.ta]; const bs = blocosDaAula(r.aula_id); if (i < 0 || i >= bs.length) return; S.palco.i = i; S.palco.restante = (bs[i].minutos || 0) * 60; S.palco.rodando = true; S.palco.verConteudo = false; render(); }
+ACOES.blocoAnt = () => vaiBloco(S.palco.i - 1);
+ACOES.blocoProx = () => vaiBloco(S.palco.i + 1);
+ACOES.pausa = () => { S.palco.rodando = !S.palco.rodando; render(); };
+ACOES.mais5 = () => { S.palco.restante += 300; render(); };
+ACOES.zerar = () => { const r = X.turma_aulas[S.palco.ta]; S.palco.restante = (blocosDaAula(r.aula_id)[S.palco.i]?.minutos || 0) * 60; render(); };
+ACOES.verConteudo = () => { S.palco.verConteudo = !S.palco.verConteudo; render(); };
+ACOES.verPerg = () => { S.palco.verPerg = !S.palco.verPerg; render(); };
+ACOES.pergLidaPalco = async el => { const ok = await tenta(() => salvar('perguntas', { id: el.dataset.id, lida: true })); if (ok) render(); };
+ACOES.liberarBloco = async () => {
+  const r = X.turma_aulas[S.palco.ta]; const b = blocosDaAula(r.aula_id)[S.palco.i];
+  const l = S.P.liberacoes.find(x => x.turma_id === r.turma_id && x.bloco_id === b.id);
+  const ok = await tenta(() => l ? excluir('liberacoes', l.id).then(() => true) : salvar('liberacoes', { turma_id: r.turma_id, bloco_id: b.id }), l ? 'Liberação retirada.' : 'Liberado para a turma.');
+  if (ok) render();
+};
+ACOES.encerrarPalco = async () => {
+  const r = X.turma_aulas[S.palco.ta];
+  if (!r.concluida && confirma('Marcar esta aula como concluída?')) await tenta(() => salvar('turma_aulas', { id: r.id, concluida: true, liberada: true }), 'Aula concluída.');
+  S.palco = null; voltar();
+};
+
+/* ---------- Biblioteca ---------- */
+TELAS['p-biblioteca'] = () => {
+  const fs = S.P.formatos; const fid = S.p.formato || fs[0]?.id; const aulas = fid ? aulasDoFormato(fid) : [];
+  return topo({ voltar: false, etiqueta: 'ESTÚDIO', titulo: 'Biblioteca de conteúdo', extra: `<div class="seg" style="flex-wrap:wrap">${fs.map(f => `<button class="${f.id === fid ? 'ativo' : ''}" data-a="bibFormato" data-id="${f.id}">${esc(f.nome)} · ${aulasDoFormato(f.id).length}</button>`).join('')}</div>` }) + `<main>
+    <div class="linha"><button class="btn" style="flex:1" data-a="novaAula" data-formato="${fid || ''}">+ Nova aula</button><button class="btn sec" style="flex:1" data-a="novoFormato">+ Novo formato</button></div>
+    ${aulas.map(a => { const bs = blocosDaAula(a.id); const min = bs.reduce((s, b) => s + (b.minutos || 0), 0); return `<button class="card" data-a="bibAula" data-id="${a.id}"><div class="linha"><span class="num">${a.ordem}</span><div class="cresce"><p class="p0 t15 b7">${esc(a.titulo)}</p><p class="p0 t13 mudo">${bs.length} blocos · ${min} min planejados${a.duracao_min ? ' de ' + duracao(a.duracao_min) : ''}</p></div>${ic('seta', 20)}</div></button>`; }).join('') || '<p class="vazio">Nenhuma aula neste formato.</p>'}
+    ${fid ? `<button class="btn-link" data-a="editarFormato" data-id="${fid}" style="align-self:center">Editar dados do formato</button>` : ''}
+  </main>` + navProf('p-biblioteca');
+};
+ACOES.bibFormato = el => { S.p.formato = el.dataset.id; render(); };
+ACOES.bibAula = el => go('p-bib-aula', { id: el.dataset.id });
+ACOES.novaAula = el => go('p-aula-form', { formato: el.dataset.formato });
+ACOES.editarAula = el => go('p-aula-form', { id: el.dataset.id });
+ACOES.novoFormato = () => go('p-formato-form', {});
+ACOES.editarFormato = el => go('p-formato-dados', { id: el.dataset.id });
+
+function usosDoBloco(bid) { return S.P.aula_blocos.filter(l => l.bloco_id === bid).map(l => X.aulas[l.aula_id]).filter(Boolean); }
+TELAS['p-bib-aula'] = () => {
+  const a = X.aulas[S.p.id]; if (!a) return TELAS['p-biblioteca'](); const f = X.formatos[a.formato_id]; const bs = blocosDaAula(a.id);
+  return topo({ eyebrow: `${f?.nome || ''} · Aula ${a.ordem}`, titulo: a.titulo, sub: `${bs.length} blocos · ${bs.reduce((s, b) => s + (b.minutos || 0), 0)} min planejados` }) + `<main>
+    <button class="btn sec" data-a="editarAula" data-id="${a.id}">${ic('lapis', 18)} Editar dados da aula</button>
+    ${bs.map((b, i) => { const outros = usosDoBloco(b.id).filter(x => x.id !== a.id); return `<div class="card" style="gap:8px"><div class="linha"><span class="t13 b8 mudo" style="width:24px">${i + 1}</span><button class="cresce" data-a="editarBloco" data-id="${b.id}" data-aula="${a.id}" style="background:none;border:none;text-align:left;padding:0;cursor:pointer;color:inherit"><span class="t15 b7">${esc(b.titulo)}</span><br><span class="t13 mudo">${esc(rotTipo(b.tipo))}${b.minutos ? ' · ' + b.minutos + ' min' : ''}${b.visivel_aluno ? '' : ' · só professor'}${outros.length ? ` · também em ${outros.length} outra${outros.length > 1 ? 's' : ''} aula${outros.length > 1 ? 's' : ''}` : ''}</span></button>
+      <button class="btn-ic claro" style="color:var(--txt)" data-a="moverBloco" data-lig="${b._lig.id}" data-d="-1" aria-label="Subir" ${i === 0 ? 'disabled' : ''}>${ic('cima', 20)}</button><button class="btn-ic claro" style="color:var(--txt)" data-a="moverBloco" data-lig="${b._lig.id}" data-d="1" aria-label="Descer" ${i === bs.length - 1 ? 'disabled' : ''}>${ic('baixo', 20)}</button></div></div>`; }).join('') || '<p class="vazio">Nenhum bloco ainda.</p>'}
+    <div class="linha"><button class="btn" style="flex:1" data-a="novoBloco" data-aula="${a.id}">+ Novo bloco</button><button class="btn sec" style="flex:1" data-a="vincular" data-aula="${a.id}">+ Usar bloco existente</button></div>
+    <button class="btn-link" data-a="excluirAula" data-id="${a.id}" style="align-self:center;color:var(--terra)">Excluir esta aula</button>
+  </main>`;
+};
+ACOES.moverBloco = async el => {
+  const lig = X.aula_blocos[el.dataset.lig]; const bs = blocosDaAula(lig.aula_id); const i = bs.findIndex(b => b._lig.id === lig.id); const j = i + (+el.dataset.d); if (j < 0 || j >= bs.length) return;
+  const arr = bs.map(b => b._lig); [arr[i], arr[j]] = [arr[j], arr[i]];
+  const ok = await tenta(async () => { for (let k = 0; k < arr.length; k++) if (arr[k].ordem !== k + 1) await salvar('aula_blocos', { id: arr[k].id, ordem: k + 1 }); return true; }); if (ok) render();
+};
+ACOES.novoBloco = el => go('p-bloco', { aula: el.dataset.aula });
+ACOES.editarBloco = el => go('p-bloco', { id: el.dataset.id, aula: el.dataset.aula });
+ACOES.vincular = el => go('p-vincular', { aula: el.dataset.aula });
+ACOES.excluirAula = async el => { const a = X.aulas[el.dataset.id]; if (S.P.turma_aulas.some(t => t.aula_id === a.id && t.data_hora)) { if (!confirma('Esta aula já está em turmas. Excluir mesmo assim? Datas, presenças e liberações dela serão apagadas.')) return; } else if (!confirma('Excluir esta aula? Os blocos continuam na biblioteca.')) return; const ok = await tenta(() => excluir('aulas', a.id).then(() => true), 'Aula excluída.'); if (ok) voltar(); };
+
+TELAS['p-bloco'] = () => {
+  const b = S.p.id ? X.blocos[S.p.id] : null; const f = S.f;
+  if (f._ini !== (b?.id || 'novo')) { f._ini = b?.id || 'novo'; Object.assign(f, { titulo: b?.titulo || '', tipo: b?.tipo || 'exposicao', minutos: b?.minutos ?? 10, visivel: b ? b.visivel_aluno : true, conteudo: b?.conteudo || '', comando: b?.comando || '', campos: (b?.campos || []).map(c => `${c.rotulo} | ${c.linhas || 3}`).join('\n'), destino: b?.destino_kit || '', nota: b?.nota_professor || '' }); }
+  const outros = b ? usosDoBloco(b.id).filter(x => x.id !== S.p.aula) : [];
+  const tipos = [['devocional', 'Devocional'], ['exposicao', 'Exposição'], ['pratica', 'Prática'], ['exercicio', 'Exercício'], ['comando', 'Comando'], ['nota', 'Nota'], ['intervalo', 'Intervalo'], ['encerramento', 'Encerramento']];
+  return topo({ titulo: b ? 'Editar bloco' : 'Novo bloco', sub: S.p.aula ? esc(X.aulas[S.p.aula]?.titulo || '') : '' }) + `<main>
+    ${outros.length ? `<div class="aviso">${ic('link', 18)}<span>Também usado em ${outros.map(a => `<b>${esc(X.formatos[a.formato_id]?.nome || '')} · Aula ${a.ordem}</b>`).join(', ')}. Mudar aqui atualiza todos.</span></div>` : ''}
+    <div class="campo"><label class="rot" for="bt">Título</label><input class="in" id="bt" data-f="titulo" value="${esc(f.titulo)}"></div>
+    <div class="grade2"><div class="campo"><label class="rot" for="bp">Tipo</label><select class="in" id="bp" data-f="tipo" data-ch="rerender">${tipos.map(([k, n]) => `<option value="${k}" ${f.tipo === k ? 'selected' : ''}>${n}</option>`).join('')}</select></div><div class="campo"><label class="rot" for="bm">Tempo (min)</label><input class="in" id="bm" type="number" min="0" data-f="minutos" value="${esc(f.minutos)}"></div></div>
+    <fieldset style="border:none;margin:0;padding:0"><legend class="rot">Quem vê</legend><div class="linha"><button class="btn ${f.visivel ? 'escuro' : 'sec'} peq" style="flex:1" data-a="visivel" data-v="1">Professor e aluno</button><button class="btn ${!f.visivel ? 'escuro' : 'sec'} peq" style="flex:1" data-a="visivel" data-v="0">Só professor</button></div></fieldset>
+    <div class="campo"><label class="rot" for="bc">Conteúdo <span class="mudo" style="font-weight:400">(linhas com “- ” viram lista; **texto** fica em negrito)</span></label><textarea class="in" id="bc" rows="8" data-f="conteudo">${esc(f.conteudo)}</textarea></div>
+    ${f.tipo === 'comando' ? `<div class="campo"><label class="rot" for="bcm">Texto do comando</label><textarea class="in" id="bcm" rows="4" data-f="comando">${esc(f.comando)}</textarea></div>` : ''}
+    ${f.tipo === 'exercicio' ? `<div class="campo"><label class="rot" for="bcp">Campos de resposta <span class="mudo" style="font-weight:400">(um por linha: Rótulo | nº de linhas)</span></label><textarea class="in" id="bcp" rows="4" data-f="campos" placeholder="Ideia central | 2">${esc(f.campos)}</textarea></div>
+      <div class="campo"><label class="rot" for="bdk">Ao enviar, copiar para o kit do aluno</label><select class="in" id="bdk" data-f="destino"><option value="" ${!f.destino ? 'selected' : ''}>Não copiar</option><option value="pacto" ${f.destino === 'pacto' ? 'selected' : ''}>Pacto de uso</option><option value="perfil" ${f.destino === 'perfil' ? 'selected' : ''}>Perfil teológico</option></select></div>` : ''}
+    <div class="campo"><label class="rot" for="bn">Nota do professor <span class="mudo" style="font-weight:400">(aparece no preparo e no modo palco)</span></label><textarea class="in" id="bn" rows="3" data-f="nota">${esc(f.nota)}</textarea></div>
+    ${b ? `<div class="linha" style="justify-content:center">${S.p.aula ? `<button class="btn-link" data-a="desvincular">Tirar desta aula</button><span class="mudo3">·</span>` : ''}<button class="btn-link" style="color:var(--terra)" data-a="excluirBloco">Excluir bloco de vez</button></div>` : ''}
+  </main><div class="rodape"><button class="btn" data-a="salvarBloco">Salvar bloco</button></div>`;
+};
+ACOES.visivel = el => { S.f.visivel = el.dataset.v === '1'; render(); };
+ACOES.salvarBloco = async () => {
+  const f = S.f; if (!f.titulo.trim()) return toast('Dê um título ao bloco.');
+  const campos = (f.campos || '').split('\n').map(l => l.trim()).filter(Boolean).map(l => { const [r, n] = l.split('|'); return { rotulo: r.trim(), linhas: Math.max(1, Math.min(12, parseInt(n) || 3)) }; });
+  if (f.tipo === 'exercicio' && !campos.length) return toast('Informe pelo menos um campo de resposta.');
+  if (f.tipo === 'comando' && !f.comando.trim()) return toast('Escreva o texto do comando.');
+  const reg = { titulo: f.titulo.trim(), tipo: f.tipo, minutos: parseInt(f.minutos) || 0, visivel_aluno: !!f.visivel, conteudo: f.conteudo || null, comando: f.tipo === 'comando' ? f.comando : null, campos: f.tipo === 'exercicio' ? campos : [], destino_kit: f.tipo === 'exercicio' ? (f.destino || null) : null, nota_professor: f.nota || null };
+  const ok = await tenta(async () => {
+    if (S.p.id) await salvar('blocos', { id: S.p.id, ...reg });
+    else { const b = await salvar('blocos', reg); if (S.p.aula) { const n = blocosDaAula(S.p.aula).length; await salvar('aula_blocos', { aula_id: S.p.aula, bloco_id: b.id, ordem: n + 1 }); } }
+    return true;
+  }, 'Bloco salvo.');
+  if (ok) voltar();
+};
+ACOES.desvincular = async () => { const l = S.P.aula_blocos.find(x => x.aula_id === S.p.aula && x.bloco_id === S.p.id); if (!l || !confirma('Tirar este bloco desta aula? Ele continua na biblioteca e nas outras aulas.')) return; const ok = await tenta(() => excluir('aula_blocos', l.id).then(() => true), 'Bloco retirado da aula.'); if (ok) voltar(); };
+ACOES.excluirBloco = async () => { const n = usosDoBloco(S.p.id).length; if (!confirma(`Excluir este bloco de vez?${n > 1 ? ` Ele sairá de ${n} aulas.` : ''} As respostas dos alunos a ele também serão apagadas.`)) return; const ok = await tenta(() => excluir('blocos', S.p.id).then(() => true), 'Bloco excluído.'); if (ok) voltar(); };
+
+TELAS['p-vincular'] = () => {
+  const a = X.aulas[S.p.aula]; const ja = new Set(blocosDaAula(a.id).map(b => b.id)); const q = (S.f.busca || '').toLowerCase();
+  const lista = S.P.blocos.filter(b => !ja.has(b.id) && (!q || b.titulo.toLowerCase().includes(q)));
+  return topo({ titulo: 'Usar bloco existente', sub: `Para: ${esc(a.titulo)}` }) + `<main>
+    <label class="sr" for="bb">Buscar</label><input class="in" id="bb" data-f="busca" data-ch="rerender" placeholder="Buscar bloco pelo título" value="${esc(S.f.busca || '')}">
+    ${lista.slice(0, 80).map(b => { const us = usosDoBloco(b.id); return `<button class="card" data-a="vinculaBloco" data-id="${b.id}"><p class="p0 t15 b7">${esc(b.titulo)}</p><p class="p0 t13 mudo">${esc(rotTipo(b.tipo))} · ${us.map(x => `${esc(X.formatos[x.formato_id]?.nome || '')} ${x.ordem}`).join(', ') || 'sem aula'}</p></button>`; }).join('') || '<p class="vazio">Nenhum bloco encontrado.</p>'}
+  </main>`;
+};
+ACOES.vinculaBloco = async el => { const n = blocosDaAula(S.p.aula).length; const ok = await tenta(() => salvar('aula_blocos', { aula_id: S.p.aula, bloco_id: el.dataset.id, ordem: n + 1 }), 'Bloco acrescentado à aula.'); if (ok) voltar(); };
+
+TELAS['p-aula-form'] = () => {
+  const a = S.p.id ? X.aulas[S.p.id] : null; const f = S.f;
+  if (f._ini !== (a?.id || 'nova')) { f._ini = a?.id || 'nova'; const fid = a?.formato_id || S.p.formato || S.P.formatos[0]?.id; Object.assign(f, { titulo: a?.titulo || '', formato: fid, ordem: a?.ordem ?? (aulasDoFormato(fid).length + 1), duracao: a?.duracao_min ?? X.formatos[fid]?.duracao_min ?? 120, objetivo: a?.objetivo || '', devocional: a?.devocional_ref || '', lp: a?.link_professor || '', la: a?.link_aluno || '', ls: a?.link_slides || '', checklist: (a?.checklist || []).join('\n') }); }
+  return topo({ titulo: a ? 'Editar aula' : 'Nova aula' }) + `<main>
+    <div class="campo"><label class="rot" for="at">Título da aula</label><input class="in" id="at" data-f="titulo" value="${esc(f.titulo)}"></div>
+    <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px"><div class="campo"><label class="rot" for="af">Formato</label><select class="in" id="af" data-f="formato" ${a ? 'disabled' : ''}>${S.P.formatos.map(x => `<option value="${x.id}" ${x.id === f.formato ? 'selected' : ''}>${esc(x.nome)}</option>`).join('')}</select></div><div class="campo"><label class="rot" for="ao">Nº</label><input class="in" id="ao" type="number" min="1" data-f="ordem" value="${esc(f.ordem)}"></div><div class="campo"><label class="rot" for="ad">Min</label><input class="in" id="ad" type="number" min="0" data-f="duracao" value="${esc(f.duracao)}"></div></div>
+    <div class="campo"><label class="rot" for="ab">Objetivo da aula</label><textarea class="in" id="ab" rows="2" data-f="objetivo">${esc(f.objetivo)}</textarea></div>
+    <div class="campo"><label class="rot" for="av">Texto do devocional</label><input class="in" id="av" data-f="devocional" value="${esc(f.devocional)}" placeholder="Referência bíblica"></div>
+    <p class="rot p0">Materiais da aula (cole os links)</p>
+    <div class="campo"><label class="t14" for="l1">Apostila do professor</label><input class="in" id="l1" type="url" data-f="lp" value="${esc(f.lp)}" placeholder="https://"></div>
+    <div class="campo"><label class="t14" for="l2">Apostila do aluno</label><input class="in" id="l2" type="url" data-f="la" value="${esc(f.la)}" placeholder="https://"></div>
+    <div class="campo"><label class="t14" for="l3">Apresentação (slides ou PDF)</label><input class="in" id="l3" type="url" data-f="ls" value="${esc(f.ls)}" placeholder="https://"></div>
+    <div class="campo"><label class="rot" for="ac">Lista de preparo <span class="mudo" style="font-weight:400">(um item por linha)</span></label><textarea class="in" id="ac" rows="4" data-f="checklist">${esc(f.checklist)}</textarea></div>
+  </main><div class="rodape"><button class="btn" data-a="salvarAula">${a ? 'Salvar' : 'Salvar e montar os blocos'}</button></div>`;
+};
+ACOES.salvarAula = async () => {
+  const f = S.f; if (!f.titulo.trim()) return toast('Dê um título à aula.');
+  const reg = { titulo: f.titulo.trim(), ordem: parseInt(f.ordem) || 1, duracao_min: parseInt(f.duracao) || null, objetivo: f.objetivo || null, devocional_ref: f.devocional || null, link_professor: f.lp || null, link_aluno: f.la || null, link_slides: f.ls || null, checklist: (f.checklist || '').split('\n').map(x => x.trim()).filter(Boolean) };
+  const a = await tenta(() => S.p.id ? salvar('aulas', { id: S.p.id, ...reg }) : salvar('aulas', { formato_id: f.formato, ...reg }), 'Aula salva.');
+  if (!a) return;
+  if (S.p.id) voltar(); else go('p-bib-aula', { id: a.id }, { substituir: true });
+};
+
+TELAS['p-formato-dados'] = () => {
+  const x = X.formatos[S.p.id]; const f = S.f; if (f._ini !== x.id) { f._ini = x.id; Object.assign(f, { nome: x.nome, descricao: x.descricao || '', dur: x.duracao_min || '', carga: x.carga_horaria_h ?? '' }); }
+  return topo({ titulo: 'Dados do formato' }) + `<main>
+    <div class="campo"><label class="rot" for="fn">Nome</label><input class="in" id="fn" data-f="nome" value="${esc(f.nome)}"></div>
+    <div class="campo"><label class="rot" for="fd">Descrição</label><input class="in" id="fd" data-f="descricao" value="${esc(f.descricao)}"></div>
+    <div class="grade2"><div class="campo"><label class="rot" for="fu">Duração de cada aula (min)</label><input class="in" id="fu" type="number" data-f="dur" value="${esc(f.dur)}"></div><div class="campo"><label class="rot" for="fc">Carga horária (horas)</label><input class="in" id="fc" type="number" step="0.5" data-f="carga" value="${esc(f.carga)}"></div></div>
+  </main><div class="rodape"><button class="btn" data-a="salvarFormatoDados">Salvar</button></div>`;
+};
+ACOES.salvarFormatoDados = async () => { const f = S.f; const ok = await tenta(() => salvar('formatos', { id: S.p.id, nome: f.nome.trim(), descricao: f.descricao || null, duracao_min: parseInt(f.dur) || null, carga_horaria_h: parseFloat(f.carga) || null, n_encontros: aulasDoFormato(S.p.id).length }), 'Formato salvo.'); if (ok) voltar(); };
+
+TELAS['p-formato-form'] = () => {
+  const f = S.f; if (!f._ini) { f._ini = 1; f.nome = ''; f.dur = 180; f.encontros = [{ titulo: '', aulas: [] }]; }
+  const todas = S.P.formatos.flatMap(x => aulasDoFormato(x.id).map(a => ({ ...a, fnome: x.nome })));
+  const usadas = new Set(f.encontros.flatMap(e => e.aulas));
+  const base = S.P.formatos[0]; const faltam = base ? aulasDoFormato(base.id).filter(a => !usadas.has(a.id)) : [];
+  const carga = f.encontros.length * (parseInt(f.dur) || 0) / 60;
+  return topo({ titulo: 'Novo formato', sub: 'Monte encontros juntando aulas que já existem' }) + `<main>
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:8px"><div class="campo"><label class="rot" for="fn">Nome do formato</label><input class="in" id="fn" data-f="nome" value="${esc(f.nome)}" placeholder="Ex.: Três noites"></div><div class="campo"><label class="rot" for="fdu">Min/encontro</label><input class="in" id="fdu" type="number" data-f="dur" data-ch="rerender" value="${esc(f.dur)}"></div></div>
+    ${f.encontros.map((e, i) => `<div class="card" style="gap:10px"><div class="entre"><p class="p0 t15 b8">Encontro ${i + 1}</p>${f.encontros.length > 1 ? `<button class="btn-link" data-a="tiraEnc" data-i="${i}">Remover</button>` : ''}</div>
+      <label class="sr" for="et${i}">Título do encontro</label><input class="in" id="et${i}" data-ch="titEnc" data-i="${i}" value="${esc(e.titulo)}" placeholder="Título do encontro (opcional)">
+      <div class="chips">${e.aulas.map(aid => { const a = X.aulas[aid]; return `<button class="chip ativo" data-a="tiraAulaEnc" data-i="${i}" data-id="${aid}" aria-label="Tirar ${esc(a?.titulo)}">${esc(X.formatos[a?.formato_id]?.nome || '')} ${a?.ordem} · ${esc((a?.titulo || '').split(':')[0])} ✕</button>`; }).join('')}</div>
+      <label class="sr" for="es${i}">Acrescentar aula</label><select class="in" id="es${i}" data-ch="addAulaEnc" data-i="${i}"><option value="">+ Acrescentar aula…</option>${todas.map(a => `<option value="${a.id}">${esc(a.fnome)} ${a.ordem} · ${esc(a.titulo)}</option>`).join('')}</select></div>`).join('')}
+    <button class="btn sec" data-a="addEnc">+ Encontro</button>
+    <div class="aviso" style="flex-direction:column;gap:4px">${base && faltam.length ? `<b>Ficam de fora do ${esc(base.nome)}: aulas ${faltam.map(a => a.ordem).join(', ')}</b>` : ''}<span>Carga horária: ${f.encontros.length} encontro${f.encontros.length > 1 ? 's' : ''} × ${duracao(parseInt(f.dur) || 0)} = ${cargaTxt(carga)} no certificado</span></div>
+  </main><div class="rodape"><button class="btn" data-a="salvarFormato">Salvar formato</button></div>`;
+};
+ACOES.addEnc = () => { S.f.encontros.push({ titulo: '', aulas: [] }); render(); };
+ACOES.tiraEnc = el => { S.f.encontros.splice(+el.dataset.i, 1); render(); };
+ACOES.titEnc = el => { S.f.encontros[+el.dataset.i].titulo = el.value; };
+ACOES.addAulaEnc = el => { if (!el.value) return; const e = S.f.encontros[+el.dataset.i]; if (!e.aulas.includes(el.value)) e.aulas.push(el.value); render(); };
+ACOES.tiraAulaEnc = el => { const e = S.f.encontros[+el.dataset.i]; e.aulas = e.aulas.filter(x => x !== el.dataset.id); render(); };
+ACOES.salvarFormato = async () => {
+  const f = S.f; if (!f.nome.trim()) return toast('Dê um nome ao formato.'); if (f.encontros.some(e => !e.aulas.length)) return toast('Cada encontro precisa de pelo menos uma aula.');
+  const dur = parseInt(f.dur) || 120;
+  const novo = await tenta(async () => {
+    const fm = await salvar('formatos', { nome: f.nome.trim(), n_encontros: f.encontros.length, duracao_min: dur, carga_horaria_h: f.encontros.length * dur / 60, ordem: S.P.formatos.length + 1 });
+    for (let i = 0; i < f.encontros.length; i++) {
+      const e = f.encontros[i]; const prim = X.aulas[e.aulas[0]];
+      const titulo = e.titulo.trim() || e.aulas.map(id => (X.aulas[id]?.titulo || '').split(':')[0]).join(' e ');
+      const a = await salvar('aulas', { formato_id: fm.id, ordem: i + 1, titulo, duracao_min: dur, objetivo: prim?.objetivo || null, devocional_ref: prim?.devocional_ref || null, link_professor: prim?.link_professor || null, link_aluno: prim?.link_aluno || null, link_slides: prim?.link_slides || null, checklist: prim?.checklist || [] });
+      let k = 0; const vistos = new Set();
+      for (const aid of e.aulas) for (const b of blocosDaAula(aid)) { if (vistos.has(b.id)) continue; vistos.add(b.id); await salvar('aula_blocos', { aula_id: a.id, bloco_id: b.id, ordem: ++k }); }
+    }
+    return fm;
+  }, 'Formato criado.');
+  if (novo) { S.pilha = []; go('p-biblioteca', { formato: novo.id }, { substituir: true }); }
+};
+
+/* ===================================================================== */
+iniciar();
+</script>
+</body>
+</html>
